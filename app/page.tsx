@@ -155,6 +155,7 @@ export default function Home() {
         isOpen={isAiModalOpen}
         onClose={() => setIsAiModalOpen(false)}
       />
+      </div>
     </div>
   );
 }
