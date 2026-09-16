@@ -46,10 +46,10 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="w-full flex flex-col overflow-x-hidden">
+    <div className="w-full flex flex-col">
       {/* Hero Section */}
       <div 
-        className="relative flex flex-col items-center justify-center text-center pt-24 pb-48 md:pt-32 md:pb-64 w-[100vw] left-1/2 -translate-x-1/2"
+        className="relative flex flex-col items-center justify-center text-center pt-24 pb-48 md:pt-32 md:pb-64 w-[100vw] left-[calc(-50vw+50%)]"
         style={{ backgroundImage: 'url(/hero-bg.jpg)', backgroundSize: 'cover', backgroundPosition: 'center' }}
       >
         <div className="absolute inset-0 bg-black/60 dark:bg-black/70"></div>
