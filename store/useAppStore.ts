@@ -190,7 +190,7 @@ export const useAppStore = create<AppState>()(
               return {
                 ...p,
                 financials: { ...p.financials, expert_verified_value: verifiedValue },
-                status: 'expert_audited'
+                status: 'expert_audited' as any
               };
             }
             return p;

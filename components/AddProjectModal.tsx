@@ -61,6 +61,7 @@ export default function AddProjectModal({ isOpen, onClose }: AddProjectModalProp
       addProject({
         id: newProjId,
         project_name: values.project_name,
+        evidences: [],
         location: {
           country: Country.getCountryByCode(selectedCountry)?.name,
           state_or_region: State.getStateByCodeAndCountry(values.region, selectedCountry)?.name || values.region,

@@ -131,7 +131,7 @@ export default function ExpertAuthModal({ isOpen, onClose }: ExpertAuthModalProp
               </div>
               <div className="space-y-2">
                 <Label>Profession</Label>
-                <Select value={profession} onValueChange={setProfession}>
+                <Select value={profession} onValueChange={(val) => setProfession(val || "")}>
                   <SelectTrigger>
                     <SelectValue placeholder="Select profession" />
                   </SelectTrigger>
