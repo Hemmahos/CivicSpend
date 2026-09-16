@@ -46,14 +46,14 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="p-4 md:p-8">
+    <div className="w-full flex flex-col overflow-x-hidden">
       {/* Hero Section */}
       <div 
-        className="relative flex flex-col items-center justify-center text-center py-20 md:py-28 max-w-5xl mx-auto rounded-3xl overflow-hidden mb-12 shadow-xl"
+        className="relative flex flex-col items-center justify-center text-center py-24 md:py-32 w-[100vw] left-1/2 -translate-x-1/2 mb-12"
         style={{ backgroundImage: 'url(/hero-bg.jpg)', backgroundSize: 'cover', backgroundPosition: 'center' }}
       >
-        <div className="absolute inset-0 bg-black/50 dark:bg-black/60"></div>
-        <div className="relative z-10 px-4">
+        <div className="absolute inset-0 bg-black/60 dark:bg-black/70"></div>
+        <div className="relative z-10 px-4 max-w-4xl mx-auto">
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight text-white leading-[1.15]">
             Know what project is ongoing<br className="hidden md:block" />
             <span className="bg-[#40AFD6] text-white px-4 py-1 mt-2 inline-block rounded-xl md:mt-3 shadow-sm transform -rotate-1">
@@ -66,9 +66,10 @@ export default function Home() {
         </div>
       </div>
 
-      <div className="mb-10">
-        <LiveProjectMap />
-      </div>
+      <div className="p-4 md:p-8 pt-0 max-w-7xl mx-auto w-full">
+        <div className="mb-10">
+          <LiveProjectMap />
+        </div>
 
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6 mt-4 px-2">
         <div className="flex items-center gap-3">
