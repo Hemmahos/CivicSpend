@@ -8,8 +8,8 @@ const ai = new GoogleGenAI({});
 
 export async function GET() {
   try {
-    // 1. Fetch RSS feed for African infrastructure projects
-    const feed = await parser.parseURL('https://news.google.com/rss/search?q=government+infrastructure+project+africa+construction&hl=en-US&gl=US&ceid=US:en');
+    // 1. Fetch RSS feed for Nigerian infrastructure projects
+    const feed = await parser.parseURL('https://news.google.com/rss/search?q=government+infrastructure+project+nigeria+construction&hl=en-US&gl=US&ceid=US:en');
     
     // Get top 5 articles
     const articles = feed.items.slice(0, 5).map(item => ({
@@ -30,7 +30,7 @@ export async function GET() {
 
     // 2. Prepare prompt for Gemini
     const prompt = `
-You are an expert data extractor. I have a list of news articles about government infrastructure projects in Africa.
+You are an expert data extractor. I have a list of news articles about government infrastructure projects in Nigeria.
 Extract any distinct public infrastructure construction projects mentioned in these articles.
 Return the data as a JSON array matching exactly this schema for each project:
 {

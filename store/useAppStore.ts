@@ -84,7 +84,7 @@ export const useAppStore = create<AppState>()(
           const { data, error } = await supabase.from('projects').select('*');
           if (error) throw error;
           if (data) {
-            const validProjects = (data as Project[]).filter(p => !p.id.startsWith('ai_mock_'));
+            const validProjects = (data as Project[]).filter(p => !p.id.startsWith('ai_mock_') && p.project_name !== 'HIDDEN');
             set({ projects: validProjects });
           }
         } catch (error) {
