@@ -48,16 +48,22 @@ export default function Home() {
   return (
     <div className="p-4 md:p-8">
       {/* Hero Section */}
-      <div className="flex flex-col items-center justify-center text-center py-12 md:py-20 max-w-4xl mx-auto">
-        <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight text-foreground leading-[1.15]">
-          Know what project is ongoing<br className="hidden md:block" />
-          <span className="bg-[#40AFD6] text-black px-4 py-1 mt-2 inline-block rounded-xl md:mt-3 shadow-sm transform -rotate-1">
-            in your neighbourhood.
-          </span>
-        </h1>
-        <p className="mt-8 text-lg text-muted-foreground max-w-2xl">
-          Verified infrastructure data from citizens and professionals across every state, local government, and ward. Curated daily.
-        </p>
+      <div 
+        className="relative flex flex-col items-center justify-center text-center py-20 md:py-28 max-w-5xl mx-auto rounded-3xl overflow-hidden mb-12 shadow-xl"
+        style={{ backgroundImage: 'url(/hero-bg.jpg)', backgroundSize: 'cover', backgroundPosition: 'center' }}
+      >
+        <div className="absolute inset-0 bg-black/50 dark:bg-black/60"></div>
+        <div className="relative z-10 px-4">
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight text-white leading-[1.15]">
+            Know what project is ongoing<br className="hidden md:block" />
+            <span className="bg-[#40AFD6] text-white px-4 py-1 mt-2 inline-block rounded-xl md:mt-3 shadow-sm transform -rotate-1">
+              in your neighbourhood.
+            </span>
+          </h1>
+          <p className="mt-8 text-lg text-white/90 max-w-2xl mx-auto font-medium drop-shadow-sm">
+            Verified infrastructure data from citizens and professionals across every state, local government, and ward. Curated daily.
+          </p>
+        </div>
       </div>
 
       <div className="mb-10">
