@@ -119,14 +119,24 @@ export default function Home() {
         </div>
       )}
 
-      {projects.length > visibleCount && (
-        <div className="flex justify-center mt-10">
-          <button
-            onClick={() => setVisibleCount((prev) => prev + 4)}
-            className="px-6 py-3 bg-secondary hover:bg-secondary/80 text-secondary-foreground font-medium rounded-full transition-colors flex items-center gap-2 border border-border"
-          >
-            Load more projects
-          </button>
+      {(projects.length > visibleCount || visibleCount > 4) && (
+        <div className="flex justify-center mt-10 gap-4">
+          {visibleCount > 4 && (
+            <button
+              onClick={() => setVisibleCount(4)}
+              className="px-6 py-3 bg-card hover:bg-muted text-foreground font-medium rounded-full transition-colors flex items-center gap-2 border border-border"
+            >
+              Show less
+            </button>
+          )}
+          {projects.length > visibleCount && (
+            <button
+              onClick={() => setVisibleCount((prev) => prev + 4)}
+              className="px-6 py-3 bg-secondary hover:bg-secondary/80 text-secondary-foreground font-medium rounded-full transition-colors flex items-center gap-2 border border-border"
+            >
+              Load more projects
+            </button>
+          )}
         </div>
       )}
 

@@ -36,7 +36,7 @@ export default function LiveProjectMap() {
           // Location denial is an expected flow and is handled via UI state.
           setLocationError(true);
         },
-        { enableHighAccuracy: false, maximumAge: 60000 }
+        { enableHighAccuracy: false, maximumAge: 60000, timeout: 5000 }
       );
     } else {
       setLocationError(true);

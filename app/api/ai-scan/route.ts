@@ -24,33 +24,8 @@ export async function GET() {
     }
 
     if (!process.env.GEMINI_API_KEY) {
-      console.warn("No GEMINI_API_KEY found, returning mock projects.");
-      // Return a mock project if there's no API key
-      return NextResponse.json({
-        projects: [
-          {
-            id: `ai_mock_${Date.now()}`,
-            project_name: "Mock AI Discovered Highway (API Key Missing)",
-            location: {
-              state_or_region: "Nairobi",
-              specific_address: "Kenya",
-              lat: -1.2921,
-              lng: 36.8219
-            },
-            financials: {
-              total_budget_claimed_local_currency: 500000000,
-              expert_verified_value: null
-            },
-            deliverables: ["Construct 50km of new highway"],
-            status: "pending",
-            sources: ["https://example.com/news"],
-            origin: "ai_scan",
-            upvotes: 0,
-            downvotes: 0,
-            mediaUrl: "https://images.unsplash.com/photo-1545459720-aac8509eb02c?q=80&w=1600&auto=format&fit=crop"
-          }
-        ]
-      });
+      console.warn("No GEMINI_API_KEY found, returning error.");
+      return NextResponse.json({ error: "Gemini API key is missing. Please configure it in your Vercel Dashboard." }, { status: 400 });
     }
 
     // 2. Prepare prompt for Gemini
