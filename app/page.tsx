@@ -49,7 +49,7 @@ export default function Home() {
     <div className="w-full flex flex-col overflow-x-hidden">
       {/* Hero Section */}
       <div 
-        className="relative flex flex-col items-center justify-center text-center py-24 md:py-32 w-[100vw] left-1/2 -translate-x-1/2 mb-12"
+        className="relative flex flex-col items-center justify-center text-center pt-24 pb-48 md:pt-32 md:pb-64 w-[100vw] left-1/2 -translate-x-1/2"
         style={{ backgroundImage: 'url(/hero-bg.jpg)', backgroundSize: 'cover', backgroundPosition: 'center' }}
       >
         <div className="absolute inset-0 bg-black/60 dark:bg-black/70"></div>
@@ -66,8 +66,8 @@ export default function Home() {
         </div>
       </div>
 
-      <div className="p-4 md:p-8 pt-0 max-w-7xl mx-auto w-full">
-        <div className="mb-10">
+      <div className="p-4 md:p-8 pt-0 max-w-7xl mx-auto w-full relative z-20 -mt-24 md:-mt-40">
+        <div className="mb-10 shadow-2xl rounded-3xl">
           <LiveProjectMap />
         </div>
 
