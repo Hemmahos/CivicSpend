@@ -84,7 +84,8 @@ export const useAppStore = create<AppState>()(
           const { data, error } = await supabase.from('projects').select('*');
           if (error) throw error;
           if (data) {
-            set({ projects: data as Project[] });
+            const validProjects = (data as Project[]).filter(p => !p.id.startsWith('ai_mock_'));
+            set({ projects: validProjects });
           }
         } catch (error) {
           console.error("Error fetching projects from Supabase:", error);
