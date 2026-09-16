@@ -168,7 +168,7 @@ export default function EvidenceUploadModal({ project, isOpen, onClose }: Eviden
         performUpload(position.coords.latitude, position.coords.longitude);
       },
       (error) => {
-        console.error(error);
+        // Intentionally suppressing console log to prevent Next.js dev overlay popups
         toast.error("Failed to acquire GPS coordinates. Please allow location access.");
         setIsVerifying(false);
       },
@@ -186,7 +186,7 @@ export default function EvidenceUploadModal({ project, isOpen, onClose }: Eviden
         </DialogHeader>
 
         <div className="mt-4 flex flex-col items-center">
-          <div className="bg-blue-50 dark:bg-blue-900/20 text-blue-800 dark:text-blue-300 p-4 rounded-xl mb-6 flex items-start gap-3 border border-blue-100 dark:border-blue-800 w-full">
+          <div className="bg-green-50 dark:bg-green-900/20 text-green-800 dark:text-green-300 p-4 rounded-xl mb-6 flex items-start gap-3 border border-green-100 dark:border-green-800 w-full">
             <AlertCircle size={24} className="shrink-0 mt-0.5" />
             <p className="text-sm">
               <strong>Geo-Fence Active:</strong> You must be physically located within 

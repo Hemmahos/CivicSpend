@@ -9,14 +9,15 @@ import { Badge } from '@/components/ui/badge';
 import Link from 'next/link';
 
 export default function ProjectCard({ project }: { project: Project }) {
-  const { voteProject } = useAppStore();
+  const { voteProject, deviceVotes } = useAppStore();
+  const userVote = deviceVotes?.[project.id];
 
   const getStatusTag = () => {
     switch(project.status) {
       case 'pending':
         return <Badge variant="secondary" className="bg-amber-100 text-amber-800 hover:bg-amber-100 dark:bg-amber-900/30 dark:text-amber-400 flex items-center gap-1"><AlertTriangle size={12}/> Pending Consensus</Badge>;
       case 'community_verified':
-        return <Badge variant="secondary" className="bg-blue-100 text-blue-800 hover:bg-blue-100 dark:bg-blue-900/30 dark:text-blue-400">Awaiting Audit</Badge>;
+        return <Badge variant="secondary" className="bg-green-100 text-green-800 hover:bg-green-100 dark:bg-green-900/30 dark:text-green-400">Awaiting Audit</Badge>;
       case 'expert_audited':
         return <Badge variant="secondary" className="bg-emerald-100 text-emerald-800 hover:bg-emerald-100 dark:bg-emerald-900/30 dark:text-emerald-400 flex items-center gap-1"><CheckCircle size={12}/> Expert Audited</Badge>;
       case 'disputed':
@@ -63,15 +64,15 @@ export default function ProjectCard({ project }: { project: Project }) {
             <div className="flex items-center gap-4 text-muted-foreground">
               <button 
                 onClick={() => voteProject(project.id, 'up')}
-                className="flex items-center gap-1 hover:text-primary transition"
+                className={`flex items-center gap-1 transition ${userVote === 'up' ? 'text-primary font-bold' : 'hover:text-primary'}`}
               >
-                <ThumbsUp size={18} /> <span className="font-medium text-sm">{project.upvotes}</span>
+                <ThumbsUp size={18} className={userVote === 'up' ? 'fill-primary text-primary' : ''} /> <span className="font-medium text-sm">{project.upvotes}</span>
               </button>
               <button 
                 onClick={() => voteProject(project.id, 'down')}
-                className="flex items-center gap-1 hover:text-destructive transition"
+                className={`flex items-center gap-1 transition ${userVote === 'down' ? 'text-destructive font-bold' : 'hover:text-destructive'}`}
               >
-                <ThumbsDown size={18} /> <span className="font-medium text-sm">{project.downvotes}</span>
+                <ThumbsDown size={18} className={userVote === 'down' ? 'fill-destructive text-destructive' : ''} /> <span className="font-medium text-sm">{project.downvotes}</span>
               </button>
             </div>
             

@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import { supabase } from '@/lib/supabase';
 
 export type ProjectStatus = 'pending' | 'community_verified' | 'expert_audited' | 'disputed';
 
@@ -46,6 +47,7 @@ interface AppState {
   expertAuth: boolean;
   expertWalletAddress: string | null;
   expertProfession: string | null;
+  deviceVotes: Record<string, 'up' | 'down'>;
   // Actions
   setProjects: (projects: Project[]) => void;
   setActiveProject: (id: string | null) => void;
@@ -57,80 +59,19 @@ interface AppState {
   voteProject: (id: string, type: 'up' | 'down') => void;
   auditProject: (id: string, verifiedValue: number) => void;
   addEvidence: (id: string, evidence: Evidence) => void;
+  fetchProjects: () => Promise<void>;
 }
-
-const initialProjects: Project[] = [
-  {
-    id: 'proj_1',
-    project_name: 'Abuja Light Rail Refurbishment',
-    location: {
-      state_or_region: 'Abuja, FCT',
-      specific_address: 'Central Business District Station',
-      lat: 9.05785,
-      lng: 7.49508
-    },
-    financials: {
-      total_budget_claimed_local_currency: 150000000,
-      expert_verified_value: null
-    },
-    deliverables: ['Station repainting', 'New ticketing machines', 'Platform seating'],
-    status: 'pending',
-    sources: ['https://bpp.gov.ng/abuja-rail-contract', 'https://punchng.com/abuja-rail-rehab'],
-    origin: 'government',
-    upvotes: 42,
-    downvotes: 3,
-    mediaUrl: 'https://images.unsplash.com/photo-1541888087405-d91d915ba8eb?q=80&w=1600&auto=format&fit=crop',
-    evidences: [
-      {
-        id: 'ev_1',
-        mediaUrl: 'https://images.unsplash.com/photo-1541888087405-d91d915ba8eb?q=80&w=1600&auto=format&fit=crop',
-        notes: 'Initial construction phase reported.',
-        submittedBy: 'Government Official',
-        timestamp: new Date().toISOString()
-      }
-    ]
-  },
-  {
-    id: 'proj_2',
-    project_name: 'Lagos Water Works Expansion',
-    location: {
-      state_or_region: 'Lagos State',
-      specific_address: 'Ikeja Water Plant',
-      lat: 6.5965,
-      lng: 3.3421
-    },
-    financials: {
-      total_budget_claimed_local_currency: 450000000,
-      expert_verified_value: 300000000
-    },
-    deliverables: ['2 new reservoirs', 'Main pipe replacement'],
-    status: 'expert_audited',
-    sources: ['https://lagoswater.gov.ng/projects/ikeja-expansion'],
-    origin: 'government',
-    upvotes: 120,
-    downvotes: 5,
-    mediaUrl: 'https://images.unsplash.com/photo-1590502120019-335b80eeec51?q=80&w=1600&auto=format&fit=crop',
-    evidences: [
-      {
-        id: 'ev_2',
-        mediaUrl: 'https://images.unsplash.com/photo-1590502120019-335b80eeec51?q=80&w=1600&auto=format&fit=crop',
-        notes: 'Water pipe laying in progress.',
-        submittedBy: 'Anonymous',
-        timestamp: new Date().toISOString()
-      }
-    ]
-  }
-];
 
 export const useAppStore = create<AppState>()(
   persist(
     (set) => ({
-      projects: initialProjects,
+      projects: [],
       activeProjectId: null,
       uploadStatus: 'idle',
       expertAuth: false,
       expertWalletAddress: null,
       expertProfession: null,
+      deviceVotes: {},
 
       setProjects: (projects) => set({ projects }),
       setActiveProject: (id) => set({ activeProjectId: id }),
@@ -138,60 +79,159 @@ export const useAppStore = create<AppState>()(
       setExpertAuth: (status) => set({ expertAuth: status }),
       setExpertIdentity: (wallet, profession) => set({ expertWalletAddress: wallet, expertProfession: profession, expertAuth: true }),
       
-      addProject: (project) => set((state) => ({ projects: [project, ...state.projects] })),
-      addProjects: (newProjects) => set((state) => {
-        // Filter out existing projects to avoid duplicates based on project_name or id
-        const existingNames = new Set(state.projects.map(p => p.project_name.toLowerCase()));
-        const uniqueNewProjects = newProjects.filter(p => !existingNames.has(p.project_name.toLowerCase()));
-        return { projects: [...uniqueNewProjects, ...state.projects] };
-      }),
+      fetchProjects: async () => {
+        try {
+          const { data, error } = await supabase.from('projects').select('*');
+          if (error) throw error;
+          if (data) {
+            set({ projects: data as Project[] });
+          }
+        } catch (error) {
+          console.error("Error fetching projects from Supabase:", error);
+        }
+      },
+
+      addProject: async (project) => {
+        set((state) => ({ projects: [project, ...state.projects] }));
+        try {
+          await supabase.from('projects').insert(project);
+        } catch (error) {
+          console.error("Error saving to Supabase:", error);
+        }
+      },
+      addProjects: async (newProjects) => {
+        let uniqueNewProjects: Project[] = [];
+        set((state) => {
+          // Filter out existing projects to avoid duplicates based on project_name or id
+          const existingNames = new Set(state.projects.map(p => p.project_name.toLowerCase()));
+          uniqueNewProjects = newProjects.filter(p => !existingNames.has(p.project_name.toLowerCase()));
+          return { projects: [...uniqueNewProjects, ...state.projects] };
+        });
+
+        if (uniqueNewProjects.length > 0) {
+          try {
+            await supabase.from('projects').insert(uniqueNewProjects);
+          } catch (error) {
+            console.error("Error saving multiple projects to Supabase:", error);
+          }
+        }
+      },
       
-      voteProject: (id, type) => set((state) => ({
-        projects: state.projects.map(p => {
-          if (p.id === id) {
-            return {
-              ...p,
-              upvotes: type === 'up' ? p.upvotes + 1 : p.upvotes,
-              downvotes: type === 'down' ? p.downvotes + 1 : p.downvotes,
-              status: (type === 'up' && p.upvotes + 1 >= 50) ? 'community_verified' : p.status
-            };
+      voteProject: (id, type) => set((state) => {
+        const currentVote = state.deviceVotes[id];
+        
+        // If clicking the same vote again, toggle it off
+        if (currentVote === type) {
+          const newDeviceVotes = { ...state.deviceVotes };
+          delete newDeviceVotes[id];
+          
+          const newProjects = state.projects.map(p => {
+            if (p.id === id) {
+              return {
+                ...p,
+                upvotes: type === 'up' ? Math.max(0, p.upvotes - 1) : p.upvotes,
+                downvotes: type === 'down' ? Math.max(0, p.downvotes - 1) : p.downvotes,
+              };
+            }
+            return p;
+          });
+            
+          // Sync with Supabase (fire and forget)
+          const updatedProj = newProjects.find(p => p.id === id);
+          if (updatedProj) {
+            supabase.from('projects').update({ upvotes: updatedProj.upvotes, downvotes: updatedProj.downvotes }).eq('id', id).then();
           }
-          return p;
-        })
-      })),
+          
+          return {
+            deviceVotes: newDeviceVotes,
+            projects: newProjects
+          };
+        }
 
-      auditProject: (id, verifiedValue) => set((state) => ({
-        projects: state.projects.map(p => {
+        // Otherwise, setting a new vote or switching vote
+        const newProjects = state.projects.map(p => {
           if (p.id === id) {
+            let newUpvotes = p.upvotes;
+            let newDownvotes = p.downvotes;
+            
+            if (currentVote === 'up') newUpvotes = Math.max(0, newUpvotes - 1);
+            if (currentVote === 'down') newDownvotes = Math.max(0, newDownvotes - 1);
+            
+            if (type === 'up') newUpvotes += 1;
+            if (type === 'down') newDownvotes += 1;
+            
             return {
               ...p,
-              financials: { ...p.financials, expert_verified_value: verifiedValue },
-              status: 'expert_audited'
+              upvotes: newUpvotes,
+              downvotes: newDownvotes,
+              status: (type === 'up' && newUpvotes >= 50) ? 'community_verified' : p.status
             };
           }
           return p;
-        })
-      })),
+        });
+        
+        // Sync with Supabase (fire and forget)
+        const updatedProj = newProjects.find(p => p.id === id);
+        if (updatedProj) {
+          supabase.from('projects').update({ upvotes: updatedProj.upvotes, downvotes: updatedProj.downvotes, status: updatedProj.status }).eq('id', id).then();
+        }
 
-      addEvidence: (id, evidence) => set((state) => ({
-        projects: state.projects.map(p => {
-          if (p.id === id) {
-            return {
-              ...p,
-              evidences: [evidence, ...(p.evidences || [])],
-              // Optionally boost upvotes or status if community provides valid geo-fenced evidence
-              upvotes: p.upvotes + 10,
-              status: p.status === 'pending' ? 'community_verified' : p.status
-            };
-          }
-          return p;
-        })
-      }))
+        return {
+          deviceVotes: { ...state.deviceVotes, [id]: type },
+          projects: newProjects
+        };
+      }),
+
+      auditProject: (id, verifiedValue) => {
+        let updatedProj: Project | undefined;
+        set((state) => {
+          const newProjects = state.projects.map(p => {
+            if (p.id === id) {
+              return {
+                ...p,
+                financials: { ...p.financials, expert_verified_value: verifiedValue },
+                status: 'expert_audited'
+              };
+            }
+            return p;
+          });
+          updatedProj = newProjects.find(p => p.id === id);
+          return { projects: newProjects };
+        });
+        
+        if (updatedProj) {
+          supabase.from('projects').update({ financials: updatedProj.financials, status: updatedProj.status }).eq('id', id).then();
+        }
+      },
+
+      addEvidence: (id, evidence) => {
+        let updatedProj: Project | undefined;
+        set((state) => {
+          const newProjects = state.projects.map(p => {
+            if (p.id === id) {
+              return {
+                ...p,
+                evidences: [evidence, ...(p.evidences || [])],
+                // Optionally boost upvotes or status if community provides valid geo-fenced evidence
+                upvotes: p.upvotes + 10,
+                status: p.status === 'pending' ? 'community_verified' : p.status
+              };
+            }
+            return p;
+          });
+          updatedProj = newProjects.find(p => p.id === id);
+          return { projects: newProjects };
+        });
+
+        if (updatedProj) {
+          supabase.from('projects').update({ evidences: updatedProj.evidences, upvotes: updatedProj.upvotes, status: updatedProj.status }).eq('id', id).then();
+        }
+      }
     }),
     {
       name: 'civic-spend-storage',
-      // We only persist the projects array, not UI states like modals/uploadStatus
-      partialize: (state) => ({ projects: state.projects }),
+      // We only persist the projects array and deviceVotes, not UI states like modals/uploadStatus
+      partialize: (state) => ({ projects: state.projects, deviceVotes: state.deviceVotes }),
     }
   )
 );

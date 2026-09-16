@@ -11,7 +11,7 @@
   --card-foreground: #0f172a;
   --popover: #ffffff;
   --popover-foreground: #0f172a;
-  --primary: #1d4ed8;
+  --primary: #008751;
   --primary-foreground: #ffffff;
   --secondary: #2563eb;
   --secondary-foreground: #ffffff;
@@ -23,7 +23,7 @@
   --destructive-foreground: #ffffff;
   --border: #e2e8f0;
   --input: #e2e8f0;
-  --ring: #3b82f6;
+  --ring: #008751;
   --radius: 0.625rem;
   
   --font-sans: var(--font-geist-sans);
@@ -37,7 +37,7 @@
   --card-foreground: #e3e3e3;
   --popover: #1e1f20;
   --popover-foreground: #e3e3e3;
-  --primary: #3b82f6;
+  --primary: #008751;
   --primary-foreground: #ffffff;
   --secondary: #282a2c;
   --secondary-foreground: #e3e3e3;
@@ -49,7 +49,7 @@
   --destructive-foreground: #ffffff;
   --border: #282a2c;
   --input: #282a2c;
-  --ring: #3b82f6;
+  --ring: #008751;
 }
 
 @theme inline {

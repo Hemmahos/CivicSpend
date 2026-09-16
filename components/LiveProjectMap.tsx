@@ -35,7 +35,8 @@ export default function LiveProjectMap() {
           // Intentionally suppressing console log to prevent Next.js dev overlay popups
           // Location denial is an expected flow and is handled via UI state.
           setLocationError(true);
-        }
+        },
+        { enableHighAccuracy: false, maximumAge: 60000 }
       );
     } else {
       setLocationError(true);
@@ -72,8 +73,8 @@ export default function LiveProjectMap() {
         {userLocation && (
           <Marker latitude={userLocation.lat} longitude={userLocation.lng} anchor="center">
             <div className="relative flex h-5 w-5 items-center justify-center">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-3 w-3 bg-blue-600 border-2 border-white shadow-sm"></span>
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary/70 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-3 w-3 bg-primary border-2 border-white shadow-sm"></span>
             </div>
           </Marker>
         )}
@@ -108,11 +109,11 @@ export default function LiveProjectMap() {
       {/* Geolocation Status Indicator */}
       <div className="absolute top-4 left-4 bg-white/90 dark:bg-[#131314]/80 backdrop-blur-md px-4 py-2 rounded-full shadow-lg border border-slate-200 dark:border-[#282A2C] flex items-center gap-2 text-xs font-bold text-slate-700 dark:text-[#E3E3E3] pointer-events-none">
         {userLocation ? (
-          <><Navigation size={14} className="text-blue-500" /> Location Active</>
+          <><Navigation size={14} className="text-primary" /> Location Active</>
         ) : locationError ? (
           <><Navigation size={14} className="text-red-500" /> Location Denied</>
         ) : (
-          <><span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse block"></span> Locating...</>
+          <><span className="w-2 h-2 rounded-full bg-primary animate-pulse block"></span> Locating...</>
         )}
       </div>
     </div>

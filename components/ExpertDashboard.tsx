@@ -58,8 +58,8 @@ export default function ExpertDashboard() {
   if (!expertAuth) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh] bg-card rounded-2xl border border-border p-8 shadow-sm">
-        <div className="w-20 h-20 bg-blue-50 dark:bg-blue-900/20 rounded-full flex items-center justify-center mb-6">
-          <ShieldCheck size={40} className="text-blue-600 dark:text-blue-400" />
+        <div className="w-20 h-20 bg-green-50 dark:bg-green-900/20 rounded-full flex items-center justify-center mb-6">
+          <ShieldCheck size={40} className="text-green-600 dark:text-green-400" />
         </div>
         <h2 className="text-2xl font-bold text-card-foreground mb-2">Expert Oracle Access</h2>
         <p className="text-muted-foreground text-center max-w-md mb-8">
@@ -68,7 +68,7 @@ export default function ExpertDashboard() {
         <Button 
           size="lg" 
           onClick={handleConnectWallet}
-          className="bg-blue-600 hover:bg-blue-700 h-12 px-8 text-base rounded-xl flex items-center gap-2 text-white"
+          className="bg-primary hover:bg-primary/90 h-12 px-8 text-base rounded-xl flex items-center gap-2 text-white"
         >
           <Wallet size={18} />
           Authenticate Auditor Credentials
@@ -122,7 +122,7 @@ export default function ExpertDashboard() {
                   size="sm"
                   disabled={record.status !== 'community_verified'}
                   onClick={() => handleOpenAudit(record)}
-                  className="bg-blue-600 hover:bg-blue-700 text-white"
+                  className="bg-primary hover:bg-primary/90 text-white"
                 >
                   Perform Audit
                 </Button>
@@ -143,7 +143,7 @@ export default function ExpertDashboard() {
         <DialogContent className="sm:max-w-[500px]">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <Calculator className="text-blue-600"/> Audit Verification
+              <Calculator className="text-primary"/> Audit Verification
             </DialogTitle>
           </DialogHeader>
 
@@ -182,7 +182,7 @@ export default function ExpertDashboard() {
 
               <Button
                 size="lg"
-                className="w-full h-14 rounded-xl text-lg font-medium shadow-md shadow-blue-200/20 bg-blue-600 hover:bg-blue-700 text-white flex items-center justify-center gap-2"
+                className="w-full h-14 rounded-xl text-lg font-medium shadow-md shadow-green-200/20 bg-primary hover:bg-primary/90 text-primary-foreground flex items-center justify-center gap-2"
                 disabled={!verifiedValue || isSigning}
                 onClick={handleSignTransaction}
               >

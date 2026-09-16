@@ -39,7 +39,7 @@ export default function DiscrepancyBar({
         {isAudited && (
           <div className="text-right">
              <span className="text-xs text-zinc-500 dark:text-zinc-400 uppercase tracking-wider font-semibold">Verified Value</span>
-             <div className="text-xl font-bold text-blue-600 dark:text-blue-400">{formatCurrency(verifiedValue)}</div>
+             <div className="text-xl font-bold text-green-600 dark:text-green-400">{formatCurrency(verifiedValue)}</div>
           </div>
         )}
       </div>
@@ -50,7 +50,7 @@ export default function DiscrepancyBar({
         
         {/* Overlaid Bar (Verified Value) */}
         <motion.div 
-          className="absolute top-0 left-0 bottom-0 bg-blue-500 rounded-full shadow-[0_0_10px_rgba(59,130,246,0.5)]"
+          className="absolute top-0 left-0 bottom-0 bg-green-500 rounded-full shadow-[0_0_10px_rgba(34,197,94,0.5)]"
           initial={{ width: 0 }}
           animate={{ width: isAudited ? `${percentage}%` : '0%' }}
           transition={{ duration: 1, ease: "easeOut" }}

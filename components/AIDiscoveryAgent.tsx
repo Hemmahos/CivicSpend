@@ -128,7 +128,7 @@ export default function AIDiscoveryAgent({ isOpen, onClose }: AIDiscoveryAgentPr
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="sm:max-w-[700px] bg-background">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2 text-indigo-600 dark:text-indigo-400">
+          <DialogTitle className="flex items-center gap-2 text-[#40AFD6]">
             <Bot size={20}/> AI Project Discovery
           </DialogTitle>
         </DialogHeader>
@@ -137,14 +137,14 @@ export default function AIDiscoveryAgent({ isOpen, onClose }: AIDiscoveryAgentPr
           {/* State: IDLE */}
           {scanStatus === 'idle' && (
             <div className="flex flex-col items-center justify-center py-12 text-center">
-              <div className="w-20 h-20 bg-indigo-50 dark:bg-indigo-950/30 rounded-full flex items-center justify-center mb-6">
-                <Radar size={40} className="text-indigo-500" />
+              <div className="w-20 h-20 bg-[#40AFD6]/10 dark:bg-[#40AFD6]/20 rounded-full flex items-center justify-center mb-6">
+                <Radar size={40} className="text-[#40AFD6]" />
               </div>
               <h3 className="text-xl font-bold text-foreground mb-2">Deploy AI Scraper</h3>
               <p className="text-muted-foreground max-w-md mx-auto mb-8">
                 Our AI Oracle can scan recent government press releases, federal budgets, and verified news outlets to discover newly announced public infrastructure projects in your region.
               </p>
-              <Button size="lg" onClick={startScan} className="bg-indigo-600 hover:bg-indigo-700 text-white px-8 flex items-center gap-2">
+              <Button size="lg" onClick={startScan} className="bg-[#40AFD6] hover:bg-[#40AFD6]/90 text-white px-8 flex items-center gap-2">
                 <Search size={18} /> Initiate Scan
               </Button>
             </div>
@@ -154,18 +154,18 @@ export default function AIDiscoveryAgent({ isOpen, onClose }: AIDiscoveryAgentPr
           {(scanStatus === 'scanning' || scanStatus === 'parsing') && (
             <div className="flex flex-col items-center justify-center py-16 text-center">
               <div className="relative w-24 h-24 mb-8">
-                <div className="absolute inset-0 border-4 border-indigo-100 dark:border-indigo-900/30 rounded-full"></div>
-                <div className="absolute inset-0 border-4 border-indigo-500 rounded-full border-t-transparent animate-spin"></div>
+                <div className="absolute inset-0 border-4 border-[#40AFD6]/20 dark:border-[#40AFD6]/20 rounded-full"></div>
+                <div className="absolute inset-0 border-4 border-[#40AFD6] rounded-full border-t-transparent animate-spin"></div>
                 <div className="absolute inset-0 flex items-center justify-center">
-                  {scanStatus === 'scanning' ? <Search size={28} className="text-indigo-500 animate-pulse"/> : <FileText size={28} className="text-indigo-500 animate-bounce"/>}
+                  {scanStatus === 'scanning' ? <Search size={28} className="text-[#40AFD6] animate-pulse"/> : <FileText size={28} className="text-[#40AFD6] animate-bounce"/>}
                 </div>
               </div>
               <h3 className="text-lg font-semibold text-foreground mb-2">
                 {scanStatus === 'scanning' ? 'Scanning News & Databases...' : 'Parsing Financial Data & Cross-referencing...'}
               </h3>
               <div className="text-sm text-muted-foreground font-mono flex flex-col items-center gap-1">
-                <span className={scanStatus === 'scanning' ? 'text-indigo-600 dark:text-indigo-400' : 'text-muted-foreground'}>&gt; ping gov.ng/budgets ... 200 OK</span>
-                {scanStatus === 'parsing' && <span className="text-indigo-600 dark:text-indigo-400">&gt; extracting entity [Infrastructure] ... Success</span>}
+                <span className={scanStatus === 'scanning' ? 'text-[#40AFD6]' : 'text-muted-foreground'}>&gt; ping gov.ng/budgets ... 200 OK</span>
+                {scanStatus === 'parsing' && <span className="text-[#40AFD6]">&gt; extracting entity [Infrastructure] ... Success</span>}
               </div>
             </div>
           )}
@@ -182,46 +182,58 @@ export default function AIDiscoveryAgent({ isOpen, onClose }: AIDiscoveryAgentPr
 
               <ScrollArea className="flex-1 pr-4 -mr-4">
                 <div className="space-y-4 pb-4">
-                  {discoveredProjects.map((proj) => (
-                    <div 
-                      key={proj.id} 
-                      className={`border rounded-xl p-4 transition-all cursor-pointer ${
-                        selectedProjects.includes(proj.id) ? 'border-indigo-500 bg-indigo-50/50 dark:bg-indigo-950/20' : 'border-border hover:border-indigo-300'
-                      }`}
-                      onClick={() => toggleSelection(proj.id)}
-                    >
-                      <div className="flex items-start gap-3">
-                        <div className="mt-1">
-                          <Checkbox checked={selectedProjects.includes(proj.id)} />
-                        </div>
-                        <div className="flex-1">
-                          <h4 className="font-bold text-foreground">{proj.project_name}</h4>
-                          
-                          <div className="grid grid-cols-2 gap-2 mt-3 mb-3">
-                            <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                              <MapPin size={14} className="text-muted-foreground/70"/>
-                              {proj.location.specific_address}, {proj.location.state_or_region}
-                            </div>
-                            <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                              <DollarSign size={14} className="text-muted-foreground/70"/>
-                              ₦{proj.financials.total_budget_claimed_local_currency.toLocaleString()}
-                            </div>
+                  {discoveredProjects.length > 0 ? (
+                    discoveredProjects.map((proj) => (
+                      <div 
+                        key={proj.id} 
+                        className={`border rounded-xl p-4 transition-all cursor-pointer ${
+                          selectedProjects.includes(proj.id) ? 'border-[#40AFD6] bg-[#40AFD6]/10' : 'border-border hover:border-[#40AFD6]/50'
+                        }`}
+                        onClick={() => toggleSelection(proj.id)}
+                      >
+                        <div className="flex items-start gap-3">
+                          <div className="mt-1">
+                            <Checkbox checked={selectedProjects.includes(proj.id)} />
                           </div>
+                          <div className="flex-1">
+                            <h4 className="font-bold text-foreground">{proj.project_name}</h4>
+                            
+                            <div className="grid grid-cols-2 gap-2 mt-3 mb-3">
+                              <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                                <MapPin size={14} className="text-muted-foreground/70"/>
+                                {proj.location.specific_address}, {proj.location.state_or_region}
+                              </div>
+                              <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                                <DollarSign size={14} className="text-muted-foreground/70"/>
+                                ₦{proj.financials.total_budget_claimed_local_currency.toLocaleString()}
+                              </div>
+                            </div>
 
-                          <div className="bg-background rounded border border-border p-2">
-                            <p className="text-xs font-semibold text-foreground mb-1 flex items-center gap-1">
-                              <LinkIcon size={12}/> AI Extracted Sources
-                            </p>
-                            <ul className="space-y-1">
-                              {proj.sources.map((src: string, i: number) => (
-                                <li key={i} className="text-xs text-indigo-600 dark:text-indigo-400 truncate max-w-md">{src}</li>
-                              ))}
-                            </ul>
+                            <div className="bg-background rounded border border-border p-2">
+                              <p className="text-xs font-semibold text-foreground mb-1 flex items-center gap-1">
+                                <LinkIcon size={12}/> AI Extracted Sources
+                              </p>
+                              <ul className="space-y-1">
+                                {proj.sources.map((src: string, i: number) => (
+                                  <li key={i} className="text-xs text-[#40AFD6] truncate max-w-md">{src}</li>
+                                ))}
+                              </ul>
+                            </div>
                           </div>
                         </div>
                       </div>
+                    ))
+                  ) : (
+                    <div className="flex flex-col items-center justify-center py-20 text-center border-2 border-dashed border-border rounded-2xl bg-muted/10">
+                      <div className="w-16 h-16 bg-muted/50 rounded-full flex items-center justify-center mb-4">
+                        <CheckCircle2 size={32} className="text-muted-foreground" />
+                      </div>
+                      <h4 className="text-lg font-bold text-foreground mb-2">You're all caught up!</h4>
+                      <p className="text-sm text-muted-foreground max-w-sm px-4">
+                        Our AI didn't find any new public infrastructure announcements in your region today. All recently announced projects are already being tracked on the CivicSpend ledger.
+                      </p>
                     </div>
-                  ))}
+                  )}
                 </div>
               </ScrollArea>
 
@@ -230,7 +242,7 @@ export default function AIDiscoveryAgent({ isOpen, onClose }: AIDiscoveryAgentPr
                 <Button 
                   onClick={handlePublish} 
                   disabled={selectedProjects.length === 0 || isPublishing}
-                  className="bg-indigo-600 hover:bg-indigo-700 text-white flex items-center gap-2"
+                  className="bg-[#40AFD6] hover:bg-[#40AFD6]/90 text-white flex items-center gap-2"
                 >
                   {isPublishing ? 'Publishing...' : `Publish ${selectedProjects.length} to Ledger`} <ChevronRight size={16}/>
                 </Button>

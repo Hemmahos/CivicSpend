@@ -192,7 +192,7 @@ export default function ExpertAuthModal({ isOpen, onClose }: ExpertAuthModalProp
 
           {step === 'processing' && (
             <div className="flex flex-col items-center justify-center py-8 space-y-6">
-              <Loader2 className="animate-spin text-blue-500" size={48} />
+              <Loader2 className="animate-spin text-primary" size={48} />
               <div className="text-center space-y-2">
                 <p className="font-medium text-foreground">Analyzing Document</p>
                 <p className="text-sm text-muted-foreground">Extracting identity and verifying against &apos;{profession}&apos; claims...</p>

@@ -118,7 +118,7 @@ export default function UploadForm() {
             )}
           </div>
           
-          <div className="bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400 p-3 rounded-xl text-sm flex items-start gap-2 border border-blue-100 dark:border-blue-900/30">
+          <div className="bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400 p-3 rounded-xl text-sm flex items-start gap-2 border border-green-100 dark:border-green-900/30">
             <Info className="w-5 h-5 shrink-0 mt-0.5" />
             <p><strong>Note:</strong> For accurate geo-location verification, please capture and upload evidence within a <strong>1 km radius</strong> of the construction site.</p>
           </div>
@@ -165,7 +165,7 @@ export default function UploadForm() {
 
           <Button 
             size="lg" 
-            className="w-full h-12 bg-blue-600 hover:bg-blue-700 text-white rounded-xl"
+            className="w-full h-12 bg-primary hover:bg-primary/90 text-white rounded-xl"
             disabled={!file}
             onClick={handleSimulatedUpload}
           >

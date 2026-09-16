@@ -47,8 +47,8 @@ export default function AuditPage() {
   if (!expertAuth) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[70vh] text-center px-4">
-        <div className="w-24 h-24 bg-blue-500/10 dark:bg-blue-900/20 rounded-full flex items-center justify-center mb-8 border border-blue-500/20">
-          <Shield className="text-blue-500 w-12 h-12" />
+        <div className="w-24 h-24 bg-primary/10 dark:bg-primary/20 rounded-full flex items-center justify-center mb-8 border border-primary/20">
+          <Shield className="text-primary w-12 h-12" />
         </div>
         <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-4">Expert Oracle Access</h1>
         <p className="text-muted-foreground text-lg max-w-2xl mb-12">
@@ -57,7 +57,7 @@ export default function AuditPage() {
         
         <Button 
           size="lg" 
-          className="h-14 px-8 text-lg rounded-full shadow-lg shadow-blue-500/20 bg-blue-600 hover:bg-blue-700 text-white"
+          className="h-14 px-8 text-lg rounded-full shadow-lg shadow-primary/20 bg-primary hover:bg-primary/90 text-primary-foreground"
           onClick={() => setIsAuthModalOpen(true)}
         >
           <Fingerprint className="mr-3 h-5 w-5" /> Authenticate Auditor Credentials
@@ -86,7 +86,7 @@ export default function AuditPage() {
           </span>
           <span className="font-mono">{truncateWallet(expertWalletAddress || '')}</span>
           <span className="text-muted-foreground">|</span>
-          <span className="font-medium text-blue-500">Verified {expertProfession}</span>
+          <span className="font-medium text-primary">Verified {expertProfession}</span>
         </Badge>
       </div>
 
@@ -125,7 +125,7 @@ export default function AuditPage() {
                         Awaiting Consensus
                       </Badge>
                     ) : (
-                      <Badge variant="secondary" className="bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400 border-0">
+                      <Badge variant="secondary" className="bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400 border-0">
                         Ready for Audit
                       </Badge>
                     )}
