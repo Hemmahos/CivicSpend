@@ -25,9 +25,9 @@ export async function POST(request: Request) {
     // 1. Fetch RSS feeds for multiple comprehensive queries to cast a wider net
     const safeCountry = encodeURIComponent(country.toLowerCase());
     const queries = [
-      `government+infrastructure+project+${safeCountry}+construction`,
-      `${safeCountry}+road+bridge+construction+contract`,
-      `${safeCountry}+power+water+hospital+infrastructure`
+      `infrastructure+OR+construction+project+${safeCountry}+when:30d`,
+      `road+OR+bridge+OR+railway+contract+${safeCountry}+when:30d`,
+      `hospital+OR+school+OR+power+facility+${safeCountry}+when:30d`
     ];
 
     let allItems: any[] = [];
