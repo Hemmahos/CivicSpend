@@ -224,8 +224,6 @@ export const useAppStore = create<AppState>()(
               return {
                 ...p,
                 evidences: [evidence, ...(p.evidences || [])],
-                // Optionally boost upvotes or status if community provides valid geo-fenced evidence
-                upvotes: p.upvotes + 10,
                 status: p.status === 'pending' ? 'community_verified' : p.status
               };
             }
@@ -236,7 +234,7 @@ export const useAppStore = create<AppState>()(
         });
 
         if (updatedProj) {
-          supabase.from('projects').update({ evidences: updatedProj.evidences, upvotes: updatedProj.upvotes, status: updatedProj.status }).eq('id', id).then();
+          supabase.from('projects').update({ evidences: updatedProj.evidences, status: updatedProj.status }).eq('id', id).then();
         }
       }
     }),
