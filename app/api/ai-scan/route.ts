@@ -6,13 +6,48 @@ const parser = new Parser();
 // The GoogleGenAI SDK reads from process.env.GEMINI_API_KEY by default if not passed.
 const ai = new GoogleGenAI({});
 
-export async function GET() {
+export async function POST(request: Request) {
   try {
-    // 1. Fetch RSS feed for Nigerian infrastructure projects
-    const feed = await parser.parseURL('https://news.google.com/rss/search?q=government+infrastructure+project+nigeria+construction&hl=en-US&gl=US&ceid=US:en');
+    let existingProjects: string[] = [];
+    try {
+      const body = await request.json();
+      if (body.existingProjects && Array.isArray(body.existingProjects)) {
+        existingProjects = body.existingProjects;
+      }
+    } catch (e) {
+      // Ignore body parsing errors
+    }
+
+    // 1. Fetch RSS feeds for multiple comprehensive queries to cast a wider net
+    const queries = [
+      'government+infrastructure+project+nigeria+construction',
+      'nigeria+road+bridge+construction+contract',
+      'nigeria+power+water+hospital+infrastructure'
+    ];
+
+    let allItems: any[] = [];
     
-    // Get top 5 articles
-    const articles = feed.items.slice(0, 5).map(item => ({
+    // Fetch all feeds in parallel for speed
+    const feedPromises = queries.map(q => 
+      parser.parseURL(`https://news.google.com/rss/search?q=${q}&hl=en-US&gl=US&ceid=US:en`).catch(() => ({ items: [] }))
+    );
+    const feeds = await Promise.all(feedPromises);
+    
+    for (const feed of feeds) {
+      allItems = [...allItems, ...feed.items];
+    }
+
+    // Deduplicate articles by link to avoid redundant context
+    const uniqueArticlesMap = new Map();
+    for (const item of allItems) {
+      if (!uniqueArticlesMap.has(item.link)) {
+        uniqueArticlesMap.set(item.link, item);
+      }
+    }
+    const uniqueArticles = Array.from(uniqueArticlesMap.values());
+    
+    // Feed the top 25 articles to Gemini to maximize project discovery
+    const articles = uniqueArticles.slice(0, 25).map(item => ({
       title: item.title,
       snippet: item.contentSnippet || item.content,
       link: item.link,
@@ -32,6 +67,12 @@ export async function GET() {
     const prompt = `
 You are an expert data extractor. I have a list of news articles about government infrastructure projects in Nigeria.
 Extract any distinct public infrastructure construction projects mentioned in these articles.
+
+CRITICAL DEDUPLICATION INSTRUCTIONS:
+1. DO NOT include any project that is semantically identical or refers to the same underlying project as these existing projects currently in our database:
+[${existingProjects.join(', ')}]
+2. Ensure there are NO duplicates within your own output. If the same project is mentioned across multiple articles, combine the information into a single project object.
+
 Return the data as a JSON array matching exactly this schema for each project:
 {
   "id": "generate a unique string starting with ai_",
@@ -52,7 +93,7 @@ Return the data as a JSON array matching exactly this schema for each project:
   "origin": "ai_scan",
   "upvotes": 0,
   "downvotes": 0,
-  "mediaUrl": "https://images.unsplash.com/photo-1541888087405-d91d915ba8eb?q=80&w=1600&auto=format&fit=crop" // use a generic construction image placeholder
+  "mediaUrl": "https://images.unsplash.com/photo-1541888087405-d91d915ba8eb?q=80&w=1600&auto=format&fit=crop"
 }
 
 Do not include markdown blocks or any text outside the JSON array. Only return the raw JSON array.

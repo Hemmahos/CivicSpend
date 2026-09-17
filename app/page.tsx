@@ -26,7 +26,12 @@ export default function Home() {
 
       if (lastScan !== today) {
         try {
-          const res = await fetch('/api/ai-scan');
+          const existingProjects = useAppStore.getState().projects.map(p => p.project_name);
+          const res = await fetch('/api/ai-scan', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ existingProjects })
+          });
           if (res.ok) {
             const data = await res.json();
             if (data.projects && data.projects.length > 0) {
