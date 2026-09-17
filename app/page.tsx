@@ -53,8 +53,11 @@ export default function Home() {
               useAppStore.getState().addProjects(data.projects);
               toast.success(`AI Discovery System found ${data.projects.length} new government projects today!`);
             }
+            // Only set the flag if the API call was successful
+            localStorage.setItem('lastAutoScanDate', today);
+          } else {
+            console.error("AI API returned an error:", await res.text());
           }
-          localStorage.setItem('lastAutoScanDate', today);
         } catch (error) {
           console.error("AI Auto Scan Failed:", error);
         }

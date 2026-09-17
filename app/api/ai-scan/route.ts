@@ -109,7 +109,7 @@ ${JSON.stringify(articles, null, 2)}
 
     // 3. Call Gemini API
     const response = await ai.models.generateContent({
-      model: 'gemini-3.6-flash',
+      model: 'gemini-2.5-flash',
       contents: prompt,
       config: {
         responseMimeType: 'application/json',
