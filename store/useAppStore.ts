@@ -15,6 +15,8 @@ export interface ProjectLocation {
 export interface Financials {
   total_budget_claimed_local_currency: number;
   expert_verified_value: number | null;
+  expert_auditor_note?: string;
+  expert_auditor_wallet?: string;
 }
 
 export interface Evidence {
@@ -38,8 +40,6 @@ export interface Project {
   origin?: 'ai_scan' | 'community' | 'government';
   upvotes: number;
   downvotes: number;
-  expert_auditor_note?: string;
-  expert_auditor_wallet?: string;
 }
 
 interface AppState {
@@ -192,9 +192,12 @@ export const useAppStore = create<AppState>()(
             if (p.id === id) {
               return {
                 ...p,
-                financials: { ...p.financials, expert_verified_value: verifiedValue },
-                expert_auditor_note: note,
-                expert_auditor_wallet: walletId,
+                financials: { 
+                  ...p.financials, 
+                  expert_verified_value: verifiedValue,
+                  expert_auditor_note: note,
+                  expert_auditor_wallet: walletId 
+                },
                 status: 'expert_audited' as any
               };
             }
@@ -208,9 +211,7 @@ export const useAppStore = create<AppState>()(
           supabase.from('projects')
             .update({ 
               financials: updatedProj.financials, 
-              status: updatedProj.status,
-              expert_auditor_note: note,
-              expert_auditor_wallet: walletId
+              status: updatedProj.status
             })
             .eq('id', id).then();
         }

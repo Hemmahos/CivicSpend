@@ -228,15 +228,15 @@ export default function ProjectDetailsPage() {
               <p className="text-xs text-muted-foreground mt-1 font-medium">
                 {project.status === 'expert_audited' ? 'Expert cryptographic signature verified' : 'Awaiting expert assignment'}
               </p>
-              {project.status === 'expert_audited' && project.expert_auditor_wallet && (
+              {project.status === 'expert_audited' && project.financials.expert_auditor_wallet && (
                 <div className="mt-3 p-3 bg-muted/40 rounded-lg border border-border">
                   <div className="flex items-center gap-2 mb-2 text-xs font-mono text-muted-foreground">
                     <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
-                    Signed by: {project.expert_auditor_wallet.substring(0, 6)}...{project.expert_auditor_wallet.substring(36)}
+                    Signed by: {project.financials.expert_auditor_wallet.substring(0, 6)}...{project.financials.expert_auditor_wallet.substring(36)}
                   </div>
-                  {project.expert_auditor_note && (
+                  {project.financials.expert_auditor_note && (
                     <p className="text-sm text-foreground italic border-l-2 border-primary pl-2">
-                      &quot;{project.expert_auditor_note}&quot;
+                      &quot;{project.financials.expert_auditor_note}&quot;
                     </p>
                   )}
                 </div>
