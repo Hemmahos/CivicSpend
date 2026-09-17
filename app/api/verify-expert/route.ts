@@ -7,6 +7,11 @@ export async function POST(req: Request) {
   try {
     const { name, profession, idNumber, image } = await req.json();
 
+    if (!process.env.GEMINI_API_KEY) {
+      console.warn("No GEMINI_API_KEY found, returning error.");
+      return NextResponse.json({ error: "Gemini API key is missing. Please configure it in your .env.local file." }, { status: 400 });
+    }
+
     if (!image) {
       return NextResponse.json({ error: 'Image is required' }, { status: 400 });
     }

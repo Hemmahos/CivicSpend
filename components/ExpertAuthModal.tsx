@@ -110,6 +110,12 @@ export default function ExpertAuthModal({ isOpen, onClose }: ExpertAuthModalProp
       
       const data = await response.json();
       
+      if (!response.ok) {
+        toast.error(data.error || 'Server error occurred during verification.');
+        setStep('form');
+        return;
+      }
+      
       if (data.is_match) {
         toast.success('Credentials verified successfully!');
         // Generate mock smart wallet address
