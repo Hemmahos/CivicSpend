@@ -49,6 +49,7 @@ interface AppState {
   expertAuth: boolean;
   expertWalletAddress: string | null;
   expertProfession: string | null;
+  expertAuthTimestamp: number | null;
   deviceVotes: Record<string, 'up' | 'down'>;
   // Actions
   setProjects: (projects: Project[]) => void;
@@ -56,6 +57,7 @@ interface AppState {
   setUploadStatus: (status: 'idle' | 'uploading' | 'parsing' | 'success') => void;
   setExpertAuth: (status: boolean) => void;
   setExpertIdentity: (wallet: string, profession: string) => void;
+  logoutExpert: () => void;
   addProject: (project: Project) => void;
   addProjects: (projects: Project[]) => void;
   voteProject: (id: string, type: 'up' | 'down') => void;
@@ -73,13 +75,25 @@ export const useAppStore = create<AppState>()(
       expertAuth: false,
       expertWalletAddress: null,
       expertProfession: null,
+      expertAuthTimestamp: null,
       deviceVotes: {},
 
       setProjects: (projects) => set({ projects }),
       setActiveProject: (id) => set({ activeProjectId: id }),
       setUploadStatus: (status) => set({ uploadStatus: status }),
       setExpertAuth: (status) => set({ expertAuth: status }),
-      setExpertIdentity: (wallet, profession) => set({ expertWalletAddress: wallet, expertProfession: profession, expertAuth: true }),
+      setExpertIdentity: (wallet, profession) => set({ 
+        expertWalletAddress: wallet, 
+        expertProfession: profession, 
+        expertAuth: true,
+        expertAuthTimestamp: Date.now()
+      }),
+      logoutExpert: () => set({
+        expertAuth: false,
+        expertWalletAddress: null,
+        expertProfession: null,
+        expertAuthTimestamp: null
+      }),
       
       fetchProjects: async () => {
         try {
@@ -242,7 +256,22 @@ export const useAppStore = create<AppState>()(
     {
       name: 'civic-spend-storage',
       // We only persist the projects array and deviceVotes, not UI states like modals/uploadStatus
-      partialize: (state) => ({ projects: state.projects, deviceVotes: state.deviceVotes }),
+      partialize: (state) => ({ 
+        projects: state.projects, 
+        deviceVotes: state.deviceVotes,
+        expertAuth: state.expertAuth,
+        expertWalletAddress: state.expertWalletAddress,
+        expertProfession: state.expertProfession,
+        expertAuthTimestamp: state.expertAuthTimestamp
+      }),
+      onRehydrateStorage: () => (state) => {
+        if (state?.expertAuthTimestamp) {
+          const thirtyDaysMs = 30 * 24 * 60 * 60 * 1000;
+          if (Date.now() - state.expertAuthTimestamp > thirtyDaysMs) {
+            setTimeout(() => state.logoutExpert(), 0);
+          }
+        }
+      },
     }
   )
 );
