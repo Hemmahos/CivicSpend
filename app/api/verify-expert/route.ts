@@ -36,7 +36,10 @@ The user claims:
 - Profession: ${profession}
 - ID Number: ${idNumber}
 
-Review the attached ID card image. Do the details match? Return JSON with a single boolean property "is_match" set to true if the ID card belongs to this user and confirms their stated profession, and false otherwise. Be lenient with minor typos or abbreviations, but strict about the core identity and profession matching.`
+Review the attached ID card image. Do the details match? 
+Return JSON with two properties:
+1. "is_match" (boolean): True if the ID card belongs to this user. If it's a standard government ID (passport, driver's license), it only needs to match the Name (and ideally ID number). Only reject based on profession if the document is clearly a professional license that mismatches. Be lenient with minor typos.
+2. "reason" (string): A short, 1-sentence explanation of why it was approved or rejected (e.g. "Name and ID match standard passport, profession not required on passport." or "Name does not match the uploaded ID.").`
             },
             {
               inlineData: {
@@ -54,9 +57,12 @@ Review the attached ID card image. Do the details match? Return JSON with a sing
           properties: {
             is_match: {
               type: Type.BOOLEAN
+            },
+            reason: {
+              type: Type.STRING
             }
           },
-          required: ["is_match"]
+          required: ["is_match", "reason"]
         }
       }
     });

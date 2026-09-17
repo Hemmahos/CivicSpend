@@ -127,13 +127,13 @@ export default function ExpertAuthModal({ isOpen, onClose }: ExpertAuthModalProp
       }
       
       if (data.is_match) {
-        toast.success('Credentials verified successfully!');
+        toast.success(`Verified: ${data.reason || 'Credentials match.'}`);
         // Generate mock smart wallet address
         const randomHex = Array.from({length: 40}, () => Math.floor(Math.random()*16).toString(16)).join('');
         setExpertIdentity(`0x${randomHex}`, profession);
         handleClose();
       } else {
-        toast.error('Verification failed. Information does not match ID.');
+        toast.error(`Verification failed: ${data.reason || 'Information does not match ID.'}`);
         setStep('form');
         setIdImage(null);
       }
