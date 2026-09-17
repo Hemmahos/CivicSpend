@@ -40,7 +40,6 @@ const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: numbe
 export default function EvidenceUploadModal({ project, isOpen, onClose }: EvidenceUploadModalProps) {
   const { addEvidence } = useAppStore();
   const [isVerifying, setIsVerifying] = useState(false);
-  const [mockLocation, setMockLocation] = useState(false);
   const [notes, setNotes] = useState('');
   const [submitterName, setSubmitterName] = useState('');
   const [isAnonymous, setIsAnonymous] = useState(false);
@@ -142,15 +141,6 @@ export default function EvidenceUploadModal({ project, isOpen, onClose }: Eviden
       }, 1000);
     };
 
-    if (mockLocation) {
-      // Simulate being exactly at the project coordinates
-      toast.info('Dev Mode: Mocking location to exact project coordinates...');
-      setTimeout(() => {
-        performUpload(project.location.lat, project.location.lng);
-      }, 800);
-      return;
-    }
-
     if (!navigator.geolocation) {
       toast.error("Geolocation is not supported by your browser");
       setIsVerifying(false);
@@ -180,15 +170,6 @@ export default function EvidenceUploadModal({ project, isOpen, onClose }: Eviden
         </DialogHeader>
 
         <div className="mt-4 flex flex-col items-center">
-          <div className="bg-green-50 dark:bg-green-900/20 text-green-800 dark:text-green-300 p-4 rounded-xl mb-6 flex items-start gap-3 border border-green-100 dark:border-green-800 w-full">
-            <AlertCircle size={24} className="shrink-0 mt-0.5" />
-            <p className="text-sm">
-              <strong>Geo-Fence Active:</strong> You must be physically located within 
-              <span className="font-bold"> 1 kilometer </span> 
-              of the project coordinates (<span className="font-mono text-xs">{project.location.lat.toFixed(4)}, {project.location.lng.toFixed(4)}</span>) to capture evidence.
-            </p>
-          </div>
-
           {/* Camera Viewfinder */}
           <div className="relative w-full aspect-video bg-black rounded-xl overflow-hidden mb-6 flex flex-col items-center justify-center border-2 border-border">
             {!capturedImage ? (
@@ -274,17 +255,6 @@ export default function EvidenceUploadModal({ project, isOpen, onClose }: Eviden
                 </div>
               )}
             </div>
-          </div>
-
-          <div className="w-full mb-6 text-left flex items-center gap-2">
-            <Checkbox 
-              id="mock-location"
-              checked={mockLocation} 
-              onCheckedChange={(checked) => setMockLocation(checked as boolean)}
-            />
-            <Label htmlFor="mock-location" className="text-muted-foreground text-sm font-normal cursor-pointer">
-              Dev Mode: Mock GPS to project site (Bypass physical requirement for testing)
-            </Label>
           </div>
 
           <div className="flex justify-end gap-3 pt-4 border-t border-border w-full">
