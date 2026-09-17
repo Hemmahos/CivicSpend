@@ -51,38 +51,48 @@ export default function ExpertAuthModal({ isOpen, onClose }: ExpertAuthModalProp
     if (file) {
       const reader = new FileReader();
       reader.onload = (event) => {
-        const img = new Image();
-        img.onload = () => {
-          const canvas = document.createElement('canvas');
-          let width = img.width;
-          let height = img.height;
+        const rawBase64 = event.target?.result as string;
 
-          // Max dimensions
-          const MAX_WIDTH = 1200;
-          const MAX_HEIGHT = 1200;
+        // Only attempt to compress if it's a JPEG or PNG
+        if (file.type === 'image/jpeg' || file.type === 'image/png' || file.type === 'image/webp') {
+          const img = new Image();
+          img.onload = () => {
+            const canvas = document.createElement('canvas');
+            let width = img.width;
+            let height = img.height;
 
-          if (width > height) {
-            if (width > MAX_WIDTH) {
-              height *= MAX_WIDTH / width;
-              width = MAX_WIDTH;
+            const MAX_WIDTH = 1200;
+            const MAX_HEIGHT = 1200;
+
+            if (width > height) {
+              if (width > MAX_WIDTH) {
+                height *= MAX_WIDTH / width;
+                width = MAX_WIDTH;
+              }
+            } else {
+              if (height > MAX_HEIGHT) {
+                width *= MAX_HEIGHT / height;
+                height = MAX_HEIGHT;
+              }
             }
-          } else {
-            if (height > MAX_HEIGHT) {
-              width *= MAX_HEIGHT / height;
-              height = MAX_HEIGHT;
-            }
+
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+            ctx?.drawImage(img, 0, 0, width, height);
+
+            const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.7);
+            setIdImage(compressedDataUrl);
+          };
+          img.onerror = () => {
+            console.warn("Failed to load image for compression, falling back to raw");
+            setIdImage(rawBase64);
           }
-
-          canvas.width = width;
-          canvas.height = height;
-          const ctx = canvas.getContext('2d');
-          ctx?.drawImage(img, 0, 0, width, height);
-
-          // Compress to JPEG with 0.7 quality
-          const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.7);
-          setIdImage(compressedDataUrl);
-        };
-        img.src = event.target?.result as string;
+          img.src = rawBase64;
+        } else {
+          // If it's a PDF, HEIC, or anything else, just use raw base64
+          setIdImage(rawBase64);
+        }
       };
       reader.readAsDataURL(file);
     }
