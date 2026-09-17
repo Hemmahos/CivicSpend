@@ -60,9 +60,9 @@ export default function Footer() {
 
           {/* Column 3: Contact Info */}
           <div className="flex flex-col space-y-4 md:items-end md:text-right">
-            <Link href="#" className="font-bold text-lg mb-2 flex items-center gap-2 hover:text-[#40AFD6] transition">
+            <a href="mailto:Emmanueleniabiire@gmail.com" className="font-bold text-lg mb-2 flex items-center gap-2 hover:text-[#40AFD6] transition">
               Send Us A Message <ArrowRight size={18} />
-            </Link>
+            </a>
             <p className="text-gray-300 text-sm">
               (234) 800-CIVIC-SPEND
             </p>
