@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import Parser from 'rss-parser';
 import { GoogleGenAI } from '@google/genai';
 
+export const maxDuration = 60;
+
 const parser = new Parser();
 // The GoogleGenAI SDK reads from process.env.GEMINI_API_KEY by default if not passed.
 const ai = new GoogleGenAI({});
@@ -109,7 +111,7 @@ ${JSON.stringify(articles, null, 2)}
 
     // 3. Call Gemini API
     const response = await ai.models.generateContent({
-      model: 'gemini-2.5-flash',
+      model: 'gemini-1.5-flash',
       contents: prompt,
       config: {
         responseMimeType: 'application/json',

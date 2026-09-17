@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import { GoogleGenAI, Type } from '@google/genai';
 
+export const maxDuration = 60;
+
 export async function POST(req: Request) {
   try {
     const { name, profession, idNumber, image } = await req.json();
@@ -17,7 +19,7 @@ export async function POST(req: Request) {
     const mimeType = image.split(';')[0].split(':')[1];
 
     const response = await ai.models.generateContent({
-      model: 'gemini-2.5-flash',
+      model: 'gemini-1.5-flash',
       contents: [
         {
           role: 'user',
