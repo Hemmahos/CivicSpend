@@ -32,11 +32,25 @@ export default function LiveProjectMap() {
           });
         },
         (error) => {
-          // Intentionally suppressing console log to prevent Next.js dev overlay popups
-          // Location denial is an expected flow and is handled via UI state.
-          setLocationError(true);
+          // Desktop browsers often fail or timeout without GPS. 
+          // Fallback to a free IP geolocation API.
+          fetch('https://ipapi.co/json/')
+            .then(res => res.json())
+            .then(data => {
+              if (data.latitude && data.longitude) {
+                setUserLocation({ lat: data.latitude, lng: data.longitude });
+                setViewState({ latitude: data.latitude, longitude: data.longitude, zoom: 10 });
+                setLocationError(false);
+              } else {
+                setLocationError(true);
+              }
+            })
+            .catch(() => {
+              setLocationError(true);
+            });
         },
-        { enableHighAccuracy: false, maximumAge: 60000, timeout: 5000 }
+        // Increased timeout to 15s because desktops take much longer to triangulate via WiFi/IP
+        { enableHighAccuracy: true, maximumAge: 60000, timeout: 15000 }
       );
     } else {
       setLocationError(true);
