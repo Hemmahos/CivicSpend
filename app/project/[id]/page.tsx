@@ -43,7 +43,7 @@ export default function ProjectDetailsPage() {
   };
 
   return (
-    <div className="pb-8">
+    <div className="pb-8 px-4 md:px-8 max-w-7xl mx-auto w-full">
       {/* Top Navigation */}
       <div className="mb-6 flex items-center justify-between pt-6">
         <Button 

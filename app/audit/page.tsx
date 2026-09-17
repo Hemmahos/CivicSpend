@@ -72,7 +72,7 @@ export default function AuditPage() {
   }
 
   return (
-    <div className="pb-12 pt-6">
+    <div className="pb-12 pt-6 px-4 md:px-8 max-w-7xl mx-auto w-full">
       <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Pending Audits</h1>
