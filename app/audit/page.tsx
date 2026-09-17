@@ -16,25 +16,53 @@ import {
 } from "@/components/ui/table";
 import { toast } from 'sonner';
 
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Project } from '@/store/useAppStore';
+
 export default function AuditPage() {
   const { projects, expertAuth, expertWalletAddress, expertProfession, auditProject } = useAppStore();
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [isAuditModalOpen, setIsAuditModalOpen] = useState(false);
+  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
+  const [verifiedValue, setVerifiedValue] = useState<string>('');
+  const [auditorNote, setAuditorNote] = useState<string>('');
+  const [isSigning, setIsSigning] = useState(false);
 
   // We are interested in projects that have passed community consensus but need expert audit
   const pendingAudits = projects.filter(p => p.status === 'community_verified' || p.status === 'pending');
 
-  const handlePerformAudit = (projectId: string, budget: number) => {
+  const handleOpenAudit = (project: Project) => {
+    setSelectedProject(project);
+    setVerifiedValue('');
+    setAuditorNote('');
+    setIsAuditModalOpen(true);
+  };
+
+  const handleSignTransaction = () => {
+    if (!selectedProject || !verifiedValue || !expertWalletAddress) return;
+    setIsSigning(true);
+    
     // In a real Web3 app, this would trigger a non-custodial wallet sign request
-    // e.g. await privyWallet.signMessage("Approve audit for proj: " + projectId);
     toast.promise(
       new Promise(resolve => setTimeout(resolve, 1500)),
       {
         loading: 'Generating cryptographic signature...',
         success: () => {
-          auditProject(projectId, budget); // Simply verifying the exact claimed budget for this mockup
+          auditProject(selectedProject.id, parseFloat(verifiedValue), auditorNote, expertWalletAddress);
+          setIsSigning(false);
+          setIsAuditModalOpen(false);
           return 'Audit cryptographically signed and submitted to the network!';
         },
-        error: 'Failed to sign audit.'
+        error: () => {
+          setIsSigning(false);
+          return 'Failed to sign audit.';
+        }
       }
     );
   };
@@ -133,7 +161,7 @@ export default function AuditPage() {
                   <TableCell className="text-right">
                     <Button 
                       size="sm" 
-                      onClick={() => handlePerformAudit(project.id, project.financials.total_budget_claimed_local_currency)}
+                      onClick={() => handleOpenAudit(project)}
                       disabled={project.status !== 'community_verified'}
                     >
                       {project.status === 'community_verified' ? 'Perform Audit' : 'Not Ready'}
@@ -145,6 +173,72 @@ export default function AuditPage() {
           </Table>
         )}
       </div>
+
+      <Dialog open={isAuditModalOpen} onOpenChange={(open) => !isSigning && setIsAuditModalOpen(open)}>
+        <DialogContent className="sm:max-w-[500px]">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+               Audit Verification
+            </DialogTitle>
+          </DialogHeader>
+
+          {selectedProject && (
+            <div className="space-y-6 mt-4">
+              <div className="bg-muted/50 p-4 rounded-xl border border-border">
+                <p className="text-sm text-muted-foreground mb-1">Project</p>
+                <p className="font-bold text-foreground">{selectedProject.project_name}</p>
+                
+                <div className="mt-4 pt-4 border-t border-border">
+                  <p className="text-sm text-muted-foreground mb-1">Claimed Government Budget</p>
+                  <p className="text-xl font-mono text-foreground">
+                    ₦ {selectedProject.financials.total_budget_claimed_local_currency.toLocaleString()}
+                  </p>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-foreground mb-2">
+                  Enter Verified Physical Value (NGN)
+                </label>
+                <div className="relative">
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground font-mono">₦</span>
+                  <Input
+                    type="number"
+                    className="w-full h-12 text-lg rounded-lg pl-8"
+                    placeholder="0"
+                    value={verifiedValue}
+                    onChange={(e) => setVerifiedValue(e.target.value)}
+                  />
+                </div>
+                <p className="text-xs text-muted-foreground mt-2">
+                  Based on submitted photographic evidence and engineering estimation.
+                </p>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-foreground mb-2">
+                  Public Audit Note (Optional)
+                </label>
+                <textarea
+                  className="flex min-h-[80px] w-full rounded-lg border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+                  placeholder="Explain your findings. This note will be signed by your wallet and visible to the public."
+                  value={auditorNote}
+                  onChange={(e) => setAuditorNote(e.target.value)}
+                />
+              </div>
+
+              <Button
+                size="lg"
+                className="w-full h-14 rounded-xl text-lg font-medium shadow-md shadow-green-200/20 bg-primary hover:bg-primary/90 text-primary-foreground flex items-center justify-center gap-2"
+                disabled={!verifiedValue || isSigning}
+                onClick={handleSignTransaction}
+              >
+                {isSigning ? 'Signing on Blockchain...' : 'Sign Discrepancy Report'}
+              </Button>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
