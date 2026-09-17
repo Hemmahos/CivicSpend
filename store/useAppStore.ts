@@ -32,12 +32,14 @@ export interface Project {
   financials: Financials;
   deliverables: string[];
   status: ProjectStatus;
-  mediaUrl?: string; // fallback photo/video
+  mediaUrl?: string;
   evidences: Evidence[];
   sources: string[];
   origin?: 'ai_scan' | 'community' | 'government';
   upvotes: number;
   downvotes: number;
+  expert_auditor_note?: string;
+  expert_auditor_wallet?: string;
 }
 
 interface AppState {
@@ -57,7 +59,7 @@ interface AppState {
   addProject: (project: Project) => void;
   addProjects: (projects: Project[]) => void;
   voteProject: (id: string, type: 'up' | 'down') => void;
-  auditProject: (id: string, verifiedValue: number) => void;
+  auditProject: (id: string, verifiedValue: number, note: string, walletId: string) => void;
   addEvidence: (id: string, evidence: Evidence) => void;
   fetchProjects: () => Promise<void>;
 }
@@ -183,7 +185,7 @@ export const useAppStore = create<AppState>()(
         };
       }),
 
-      auditProject: (id, verifiedValue) => {
+      auditProject: (id, verifiedValue, note, walletId) => {
         let updatedProj: Project | undefined;
         set((state) => {
           const newProjects = state.projects.map(p => {
@@ -191,6 +193,8 @@ export const useAppStore = create<AppState>()(
               return {
                 ...p,
                 financials: { ...p.financials, expert_verified_value: verifiedValue },
+                expert_auditor_note: note,
+                expert_auditor_wallet: walletId,
                 status: 'expert_audited' as any
               };
             }
@@ -201,7 +205,14 @@ export const useAppStore = create<AppState>()(
         });
         
         if (updatedProj) {
-          supabase.from('projects').update({ financials: updatedProj.financials, status: updatedProj.status }).eq('id', id).then();
+          supabase.from('projects')
+            .update({ 
+              financials: updatedProj.financials, 
+              status: updatedProj.status,
+              expert_auditor_note: note,
+              expert_auditor_wallet: walletId
+            })
+            .eq('id', id).then();
         }
       },
 

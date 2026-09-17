@@ -22,9 +22,10 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 
 export default function ExpertDashboard() {
-  const { projects, expertAuth, setExpertAuth, auditProject } = useAppStore();
+  const { projects, expertAuth, setExpertAuth, auditProject, expertWalletAddress } = useAppStore();
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [verifiedValue, setVerifiedValue] = useState<string>('');
+  const [auditorNote, setAuditorNote] = useState<string>('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSigning, setIsSigning] = useState(false);
 
@@ -40,16 +41,17 @@ export default function ExpertDashboard() {
   const handleOpenAudit = (record: Project) => {
     setSelectedProject(record);
     setVerifiedValue('');
+    setAuditorNote('');
     setIsModalOpen(true);
   };
 
   const handleSignTransaction = () => {
-    if (!selectedProject || !verifiedValue) return;
+    if (!selectedProject || !verifiedValue || !expertWalletAddress) return;
     setIsSigning(true);
     
     // Mock Blockchain transaction signing
     setTimeout(() => {
-      auditProject(selectedProject.id, parseFloat(verifiedValue));
+      auditProject(selectedProject.id, parseFloat(verifiedValue), auditorNote, expertWalletAddress);
       setIsSigning(false);
       setIsModalOpen(false);
     }, 2000);
@@ -178,6 +180,18 @@ export default function ExpertDashboard() {
                 <p className="text-xs text-muted-foreground mt-2">
                   Based on submitted photographic evidence and engineering estimation.
                 </p>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-foreground mb-2">
+                  Public Audit Note (Optional)
+                </label>
+                <textarea
+                  className="flex min-h-[80px] w-full rounded-lg border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+                  placeholder="Explain your findings. This note will be signed by your wallet and visible to the public."
+                  value={auditorNote}
+                  onChange={(e) => setAuditorNote(e.target.value)}
+                />
               </div>
 
               <Button
