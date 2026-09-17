@@ -45,7 +45,6 @@ export default function Footer() {
               CivicSpend
             </h4>
             <Link href="/" className="text-gray-300 hover:text-white transition text-sm">Community Feed</Link>
-            <Link href="/upload" className="text-gray-300 hover:text-white transition text-sm">Upload Evidence</Link>
             <Link href="/audit" className="text-gray-300 hover:text-white transition text-sm">Expert Audit</Link>
             <Link href="/how-it-works" className="text-gray-300 hover:text-white transition text-sm">How it Works</Link>
           </div>

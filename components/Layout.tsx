@@ -21,7 +21,6 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
   const navItems = [
     { name: 'Feed', path: '/' },
-    { name: 'Upload', path: '/upload' },
     { name: 'Audit', path: '/audit' },
   ];
 

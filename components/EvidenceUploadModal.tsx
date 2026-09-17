@@ -126,26 +126,20 @@ export default function EvidenceUploadModal({ project, isOpen, onClose }: Eviden
     const performUpload = (userLat: number, userLng: number) => {
       const distance = calculateDistance(userLat, userLng, project.location.lat, project.location.lng);
       
-      if (distance <= 1) { // 1 km radius
-        // Success
-        setTimeout(() => {
-          const evidenceId = 'ev_' + Math.random().toString(36).substr(2, 9);
-          addEvidence(project.id, {
-            id: evidenceId,
-            mediaUrl: capturedImage,
-            notes: notes || 'No additional notes provided.',
-            submittedBy: isAnonymous ? 'Anonymous' : (submitterName.trim() || 'Anonymous'),
-            timestamp: new Date().toISOString()
-          });
-          toast.success(`Location verified (${(distance*1000).toFixed(0)}m away). Evidence securely attached!`);
-          setIsVerifying(false);
-          handleClose();
-        }, 1000);
-      } else {
-        // Failed
-        toast.error(`Verification Failed: You are ${distance.toFixed(1)}km away. You must be within 1km of the project site.`);
+      // Upload allowed from anywhere as per new relaxed rules
+      setTimeout(() => {
+        const evidenceId = 'ev_' + Math.random().toString(36).substr(2, 9);
+        addEvidence(project.id, {
+          id: evidenceId,
+          mediaUrl: capturedImage,
+          notes: notes || 'No additional notes provided.',
+          submittedBy: isAnonymous ? 'Anonymous' : (submitterName.trim() || 'Anonymous'),
+          timestamp: new Date().toISOString()
+        });
+        toast.success(`Evidence securely attached! (Uploaded from ${distance.toFixed(1)}km away)`);
         setIsVerifying(false);
-      }
+        handleClose();
+      }, 1000);
     };
 
     if (mockLocation) {
