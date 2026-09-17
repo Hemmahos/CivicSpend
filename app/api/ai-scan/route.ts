@@ -9,20 +9,25 @@ const ai = new GoogleGenAI({});
 export async function POST(request: Request) {
   try {
     let existingProjects: string[] = [];
+    let country = 'Nigeria';
     try {
       const body = await request.json();
       if (body.existingProjects && Array.isArray(body.existingProjects)) {
         existingProjects = body.existingProjects;
+      }
+      if (body.country && typeof body.country === 'string') {
+        country = body.country;
       }
     } catch (e) {
       // Ignore body parsing errors
     }
 
     // 1. Fetch RSS feeds for multiple comprehensive queries to cast a wider net
+    const safeCountry = encodeURIComponent(country.toLowerCase());
     const queries = [
-      'government+infrastructure+project+nigeria+construction',
-      'nigeria+road+bridge+construction+contract',
-      'nigeria+power+water+hospital+infrastructure'
+      `government+infrastructure+project+${safeCountry}+construction`,
+      `${safeCountry}+road+bridge+construction+contract`,
+      `${safeCountry}+power+water+hospital+infrastructure`
     ];
 
     let allItems: any[] = [];
