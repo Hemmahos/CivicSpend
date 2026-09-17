@@ -43,49 +43,67 @@ export default function AddProjectModal({ isOpen, onClose }: AddProjectModalProp
   const countries = Country.getAllCountries().filter(c => africanCountryCodes.has(c.isoCode));
   const states = selectedCountry ? State.getStatesOfCountry(selectedCountry) : [];
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsSubmitting(true);
     
     const formData = new FormData(e.currentTarget);
     const values = Object.fromEntries(formData.entries()) as any;
     
-    // Simulate network delay
-    setTimeout(() => {
-      const newProjId = 'proj_' + Math.random().toString(36).substr(2, 9);
-      
-      const sourceList = values.sources 
-        ? values.sources.split(',').map((s: string) => s.trim()).filter((s: string) => s.length > 0)
-        : [];
+    const countryName = Country.getCountryByCode(selectedCountry)?.name;
+    const stateName = State.getStateByCodeAndCountry(values.region, selectedCountry)?.name || values.region;
+    const searchQuery = `${values.address}, ${stateName}, ${countryName}`;
 
-      addProject({
-        id: newProjId,
-        project_name: values.project_name,
-        evidences: [],
-        location: {
-          country: Country.getCountryByCode(selectedCountry)?.name,
-          state_or_region: State.getStateByCodeAndCountry(values.region, selectedCountry)?.name || values.region,
-          specific_address: values.address,
-          lat: 9.0765 + (Math.random() - 0.5) * 2, // Dummy coordinate near Abuja
-          lng: 7.3986 + (Math.random() - 0.5) * 2
-        },
-        financials: {
-          total_budget_claimed_local_currency: parseFloat(values.budget) || 0,
-          expert_verified_value: null
-        },
-        deliverables: [],
-        status: 'pending',
-        sources: sourceList,
-        origin: 'community',
-        upvotes: 0,
-        downvotes: 0,
-      });
+    let lat = 9.0765 + (Math.random() - 0.5) * 2;
+    let lng = 7.3986 + (Math.random() - 0.5) * 2;
+    
+    const MAPBOX_TOKEN = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
+    try {
+      if (MAPBOX_TOKEN && MAPBOX_TOKEN !== "YOUR_MAPBOX_TOKEN_HERE") {
+        const res = await fetch(`https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(searchQuery)}.json?access_token=${MAPBOX_TOKEN}`);
+        const data = await res.json();
+        if (data.features && data.features.length > 0) {
+          lng = data.features[0].center[0];
+          lat = data.features[0].center[1];
+        }
+      }
+    } catch (error) {
+      console.error("Geocoding failed", error);
+    }
 
-      toast.success('Project added successfully to the community ledger.');
-      setIsSubmitting(false);
-      setSelectedCountry('');
-      onClose();
-    }, 800);
+    const newProjId = 'proj_' + Math.random().toString(36).substr(2, 9);
+    
+    const sourceList = values.sources 
+      ? values.sources.split(',').map((s: string) => s.trim()).filter((s: string) => s.length > 0)
+      : [];
+
+    addProject({
+      id: newProjId,
+      project_name: values.project_name,
+      evidences: [],
+      location: {
+        country: countryName,
+        state_or_region: stateName,
+        specific_address: values.address,
+        lat,
+        lng
+      },
+      financials: {
+        total_budget_claimed_local_currency: parseFloat(values.budget) || 0,
+        expert_verified_value: null
+      },
+      deliverables: [],
+      status: 'pending',
+      sources: sourceList,
+      origin: 'community',
+      upvotes: 0,
+      downvotes: 0,
+    });
+
+    toast.success('Project added successfully to the community ledger.');
+    setIsSubmitting(false);
+    setSelectedCountry('');
+    onClose();
   };
 
   return (
