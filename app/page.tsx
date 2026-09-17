@@ -49,18 +49,25 @@ export default function Home() {
     <div className="w-full flex flex-col">
       {/* Hero Section */}
       <div 
-        className="relative flex flex-col items-center justify-center text-center pt-24 pb-48 md:pt-32 md:pb-64 w-[100vw] left-[calc(-50vw+50%)]"
+        className="relative flex flex-col items-center justify-center text-center pb-32 md:pb-40 w-[100vw] left-[calc(-50vw+50%)] min-h-[90vh]"
         style={{ backgroundImage: 'url(/hero-bg.jpg)', backgroundSize: 'cover', backgroundPosition: 'center' }}
       >
-        <div className="absolute inset-0 bg-black/60 dark:bg-black/70"></div>
-        <div className="relative z-10 px-4 max-w-4xl mx-auto">
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight text-white leading-[1.15]">
+        {/* Noise Texture Overlay */}
+        <div 
+          className="absolute inset-0 opacity-[0.35] mix-blend-overlay pointer-events-none" 
+          style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")` }}
+        ></div>
+        {/* Very subtle gradient just to ensure the white text pops, without darkening the whole image */}
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/10 to-black/30 pointer-events-none"></div>
+
+        <div className="relative z-10 px-4 max-w-4xl mx-auto -mt-16">
+          <h1 className="text-4xl md:text-5xl lg:text-7xl font-extrabold tracking-tight text-white leading-[1.15] drop-shadow-2xl [text-shadow:_0_4px_20px_rgba(0,0,0,0.6)]">
             Know what project is ongoing<br className="hidden md:block" />
-            <span className="bg-[#40AFD6] text-white px-4 py-1 mt-2 inline-block rounded-xl md:mt-3 shadow-sm transform -rotate-1">
+            <span className="bg-[#40AFD6] text-white px-4 py-1 mt-2 inline-block rounded-xl md:mt-3 shadow-xl transform -rotate-1 [text-shadow:none]">
               in your neighbourhood.
             </span>
           </h1>
-          <p className="mt-8 text-lg text-white/90 max-w-2xl mx-auto font-medium drop-shadow-sm">
+          <p className="mt-8 text-lg md:text-xl text-white max-w-2xl mx-auto font-semibold drop-shadow-xl [text-shadow:_0_2px_10px_rgba(0,0,0,0.8)]">
             Verified infrastructure data from citizens and professionals across every state, local government, and ward. Curated daily.
           </p>
         </div>
