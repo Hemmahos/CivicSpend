@@ -73,14 +73,16 @@ export async function POST(request: Request) {
     // 2. Prepare prompt for Gemini
     const prompt = `
 You are an expert data extractor. I have a list of news articles about government, NGO, and community development projects in ${country}.
-Extract any distinct projects mentioned in these articles (such as infrastructure, health, education, tech, or social initiatives).
+Extract ANY distinct projects, programs, or initiatives mentioned in these articles (such as infrastructure, health, education, tech, social initiatives, or funding grants). 
+
+Even if the project details are vague, extract it and make your best guess for the location based on the article context. If financials are missing, set them to 0.
 
 CRITICAL DEDUPLICATION INSTRUCTIONS:
 1. DO NOT include any project that is semantically identical or refers to the same underlying project as these existing projects currently in our database:
 [${existingProjects.join(', ')}]
-2. Ensure there are NO duplicates within your own output. If the same project is mentioned across multiple articles, combine the information into a single project object.
+2. Ensure there are NO duplicates within your own output. Combine matching information.
 
-Return the data as a JSON array matching exactly this schema for each project:
+Return the data as a JSON array matching exactly this schema for each project. Do NOT return an empty array if there are any initiatives mentioned.
 {
   "id": "generate a unique string starting with ai_",
   "project_name": "Name of the project",
@@ -111,7 +113,7 @@ ${JSON.stringify(articles, null, 2)}
 
     // 3. Call Gemini API
     const response = await ai.models.generateContent({
-      model: 'gemini-3.6-flash',
+      model: 'gemini-1.5-flash',
       contents: prompt,
       config: {
         responseMimeType: 'application/json',
