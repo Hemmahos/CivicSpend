@@ -76,17 +76,7 @@ export default function AIDiscoveryAgent({ isOpen, onClose }: AIDiscoveryAgentPr
   const startScan = async () => {
     setScanStatus('scanning');
     try {
-      let country = 'Nigeria';
-      try {
-        const ipRes = await fetch('https://ipapi.co/json/');
-        const ipData = await ipRes.json();
-        if (ipData.country_name) {
-          country = ipData.country_name;
-        }
-      } catch (e) {
-        console.error("Failed to fetch location", e);
-      }
-
+      const country = 'Nigeria'; // Hardcoded per user request
       const existingProjects = projects.map(p => p.project_name);
 
       setScanStatus('parsing');
@@ -99,13 +89,17 @@ export default function AIDiscoveryAgent({ isOpen, onClose }: AIDiscoveryAgentPr
       
       if (res.ok) {
         const data = await res.json();
+        console.log("AI Oracle Raw Response:", data.debug);
+        console.log("AI Oracle Parsed Projects:", data.projects);
+        
         setDiscoveredProjects(data.projects || []);
         setSelectedProjects((data.projects || []).map((p: any) => p.id));
       } else {
+        console.error("AI Oracle Error:", await res.text());
         toast.error("Failed to connect to AI Oracle.");
       }
     } catch (error) {
-      console.error(error);
+      console.error("Scan error:", error);
       toast.error("Network error during AI scan.");
     } finally {
       setScanStatus('done');
