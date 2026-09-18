@@ -23,6 +23,7 @@ import {
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { toast } from 'sonner';
+import { useTranslations } from 'next-intl';
 
 interface AddProjectModalProps {
   isOpen: boolean;
@@ -32,6 +33,7 @@ interface AddProjectModalProps {
 export default function AddProjectModal({ isOpen, onClose }: AddProjectModalProps) {
   const { addProject } = useAppStore();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const t = useTranslations('AddProjectModal');
   
   const [selectedCountry, setSelectedCountry] = useState<string>('');
   
@@ -111,20 +113,20 @@ export default function AddProjectModal({ isOpen, onClose }: AddProjectModalProp
       <DialogContent className="sm:max-w-[600px] bg-background">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-xl">
-            <PlusCircle className="text-primary" size={20}/> Register Civic Project
+            <PlusCircle className="text-primary" size={20}/> {t('title')}
           </DialogTitle>
           <DialogDescription>
-            Manually register a government or civic project from budget documents or news sources to track its progress.
+            {t('description')}
           </DialogDescription>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-6 mt-4">
           <div className="space-y-2">
-            <Label htmlFor="project_name">Project Name</Label>
+            <Label htmlFor="project_name">{t('name_label')}</Label>
             <Input 
               id="project_name" 
               name="project_name" 
-              placeholder="E.g. Lagos-Ibadan Expressway Expansion" 
+              placeholder={t('name_placeholder')} 
               required 
             />
           </div>
@@ -149,7 +151,7 @@ export default function AddProjectModal({ isOpen, onClose }: AddProjectModalProp
             </div>
 
             <div className="space-y-2">
-              <Label className="flex items-center gap-1"><MapPin size={14} /> State / Region</Label>
+              <Label className="flex items-center gap-1"><MapPin size={14} /> {t('state_label')}</Label>
               <Select 
                 name="region" 
                 disabled={!selectedCountry}
@@ -167,13 +169,13 @@ export default function AddProjectModal({ isOpen, onClose }: AddProjectModalProp
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="address">City / Address</Label>
+              <Label htmlFor="address">{t('address_label')}</Label>
               <Input id="address" name="address" placeholder="E.g. Toll Gate, Lagos" required />
             </div>
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="budget" className="flex items-center gap-1"><DollarSign size={14} /> Claimed Budget (Local Currency)</Label>
+            <Label htmlFor="budget" className="flex items-center gap-1"><DollarSign size={14} /> {t('budget_label')}</Label>
             <div className="relative">
               <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">₦</span>
               <Input 
@@ -197,9 +199,9 @@ export default function AddProjectModal({ isOpen, onClose }: AddProjectModalProp
           </div>
 
           <div className="flex justify-end gap-3 pt-4 border-t border-border">
-            <Button type="button" variant="outline" onClick={onClose} disabled={isSubmitting}>Cancel</Button>
+            <Button type="button" variant="outline" onClick={onClose} disabled={isSubmitting}>{t('cancel')}</Button>
             <Button type="submit" disabled={isSubmitting}>
-              {isSubmitting ? 'Registering...' : 'Register Project'}
+              {isSubmitting ? t('submitting') : t('submit')}
             </Button>
           </div>
         </form>

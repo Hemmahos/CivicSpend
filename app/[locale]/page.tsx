@@ -15,7 +15,8 @@ export default function Home() {
   const [isAddModalOpen, setIsAddModalOpen] = React.useState(false);
   const [isAiModalOpen, setIsAiModalOpen] = React.useState(false);
   const [visibleCount, setVisibleCount] = React.useState(4);
-  const t = useTranslations('Hero');
+  const tHero = useTranslations('Hero');
+  const tHome = useTranslations('Home');
 
   React.useEffect(() => {
     // Load data from Supabase
@@ -53,7 +54,7 @@ export default function Home() {
             if (data.projects && data.projects.length > 0) {
               // Add only projects that aren't already in the store (addProjects handles this)
               useAppStore.getState().addProjects(data.projects);
-              toast.success(`AI Discovery System found ${data.projects.length} new government projects today!`);
+              toast.success(tHome('ai_toast', { count: data.projects.length }));
             }
             // Only set the flag if the API call was successful
             localStorage.setItem('lastAutoScanDate', today);
@@ -86,10 +87,10 @@ export default function Home() {
 
         <div className="relative z-10 px-4 max-w-4xl mx-auto -mt-16">
           <h1 className="text-4xl md:text-5xl lg:text-7xl font-extrabold tracking-tight text-white leading-[1.15] drop-shadow-2xl [text-shadow:_0_4px_20px_rgba(0,0,0,0.6)]">
-            {t('title')}
+            {tHero('title')}
           </h1>
           <p className="mt-8 text-lg md:text-xl text-white max-w-2xl mx-auto font-semibold drop-shadow-xl [text-shadow:_0_2px_10px_rgba(0,0,0,0.8)]">
-            {t('subtitle')}
+            {tHero('subtitle')}
           </p>
         </div>
       </div>
@@ -101,9 +102,9 @@ export default function Home() {
 
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6 mt-4 px-2">
         <div className="flex items-center gap-3">
-          <h2 className="text-2xl font-bold dark:font-medium tracking-tight text-foreground">Community Feed</h2>
+          <h2 className="text-2xl font-bold dark:font-medium tracking-tight text-foreground">{tHome('community_feed')}</h2>
           <span className="bg-green-100 text-green-800 dark:bg-muted dark:text-foreground text-xs font-medium px-3 py-1 rounded-full">
-            {projects.length} Active
+            {projects.length} {tHome('active')}
           </span>
         </div>
         <div className="flex flex-wrap items-center gap-3">
@@ -111,13 +112,13 @@ export default function Home() {
             onClick={() => setIsAiModalOpen(true)}
             className="flex items-center gap-2 bg-[#40AFD6]/10 hover:bg-[#40AFD6]/20 text-[#40AFD6] dark:bg-[#40AFD6]/10 dark:hover:bg-[#40AFD6]/20 dark:text-[#40AFD6] px-4 py-2 dark:px-5 dark:py-2 rounded-xl dark:rounded-full text-sm font-medium transition border border-[#40AFD6]/30 dark:border-[#40AFD6]/30"
           >
-            <Bot size={18} /> <span>AI Radar</span>
+            <Bot size={18} /> <span>{tHome('ai_radar')}</span>
           </button>
           <button 
             onClick={() => setIsAddModalOpen(true)}
             className="flex items-center gap-2 bg-primary hover:bg-primary/90 text-primary-foreground dark:bg-primary dark:hover:bg-primary/80 dark:text-primary-foreground px-4 py-2 dark:px-5 dark:py-2 rounded-xl dark:rounded-full text-sm font-medium transition"
           >
-            <PlusCircle size={18} /> <span>Add Project</span>
+            <PlusCircle size={18} /> <span>{tHome('add_project')}</span>
           </button>
         </div>
       </div>
@@ -127,22 +128,22 @@ export default function Home() {
           <div className="w-20 h-20 bg-muted rounded-full flex items-center justify-center mb-4">
             <Bot className="text-muted-foreground w-10 h-10 opacity-50" />
           </div>
-          <h3 className="text-xl font-bold mb-2">No projects active in your feed</h3>
+          <h3 className="text-xl font-bold mb-2">{tHome('no_projects_title')}</h3>
           <p className="text-muted-foreground max-w-md mb-8">
-            There are currently no civic infrastructure projects tracked. Be the first to report a project manually, or use the AI Radar to automatically discover projects from government sources!
+            {tHome('no_projects_desc')}
           </p>
           <div className="flex flex-col sm:flex-row gap-4">
             <button 
               onClick={() => setIsAiModalOpen(true)}
               className="flex items-center justify-center gap-2 bg-[#40AFD6]/10 hover:bg-[#40AFD6]/20 text-[#40AFD6] dark:bg-[#40AFD6]/10 dark:hover:bg-[#40AFD6]/20 dark:text-[#40AFD6] px-6 py-3 rounded-full text-sm font-medium transition border border-[#40AFD6]/30 dark:border-[#40AFD6]/30"
             >
-              <Bot size={18} /> <span>Scan with AI Radar</span>
+              <Bot size={18} /> <span>{tHome('scan_ai')}</span>
             </button>
             <button 
               onClick={() => setIsAddModalOpen(true)}
               className="flex items-center justify-center gap-2 bg-primary hover:bg-primary/90 text-primary-foreground px-6 py-3 rounded-full text-sm font-medium transition"
             >
-              <PlusCircle size={18} /> <span>Add Project Manually</span>
+              <PlusCircle size={18} /> <span>{tHome('add_manual')}</span>
             </button>
           </div>
         </div>
@@ -161,7 +162,7 @@ export default function Home() {
               onClick={() => setVisibleCount(4)}
               className="px-6 py-3 bg-card hover:bg-muted text-foreground font-medium rounded-full transition-colors flex items-center gap-2 border border-border"
             >
-              Show less
+              {tHome('show_less')}
             </button>
           )}
           {projects.length > visibleCount && (
@@ -169,7 +170,7 @@ export default function Home() {
               onClick={() => setVisibleCount((prev) => prev + 4)}
               className="px-6 py-3 bg-secondary hover:bg-secondary/80 text-secondary-foreground font-medium rounded-full transition-colors flex items-center gap-2 border border-border"
             >
-              Load more projects
+              {tHome('load_more')}
             </button>
           )}
         </div>

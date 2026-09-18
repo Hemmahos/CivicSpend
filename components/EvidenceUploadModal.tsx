@@ -15,6 +15,7 @@ import { toast } from 'sonner';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
+import { useTranslations } from 'next-intl';
 
 interface EvidenceUploadModalProps {
   project: Project;
@@ -39,6 +40,7 @@ const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: numbe
 
 export default function EvidenceUploadModal({ project, isOpen, onClose }: EvidenceUploadModalProps) {
   const { addEvidence } = useAppStore();
+  const t = useTranslations('EvidenceUpload');
   const [isVerifying, setIsVerifying] = useState(false);
   const [notes, setNotes] = useState('');
   const [submitterName, setSubmitterName] = useState('');
@@ -73,7 +75,7 @@ export default function EvidenceUploadModal({ project, isOpen, onClose }: Eviden
       }
     } catch (err) {
       console.error("Camera error:", err);
-      setCameraError("Could not access camera. Please ensure permissions are granted.");
+      setCameraError(t('camera_error'));
     }
   };
 
@@ -132,7 +134,7 @@ export default function EvidenceUploadModal({ project, isOpen, onClose }: Eviden
 
   const handleUpload = async () => {
     if (!capturedImage) {
-      toast.error("Please capture a photo first.");
+      toast.error(t('capture_first'));
       return;
     }
 
@@ -147,18 +149,18 @@ export default function EvidenceUploadModal({ project, isOpen, onClose }: Eviden
         addEvidence(project.id, {
           id: evidenceId,
           mediaUrl: capturedImage,
-          notes: notes || 'No additional notes provided.',
-          submittedBy: isAnonymous ? 'Anonymous' : (submitterName.trim() || 'Anonymous'),
+          notes: notes || t('no_notes'),
+          submittedBy: isAnonymous ? t('anonymous') : (submitterName.trim() || t('anonymous')),
           timestamp: new Date().toISOString()
         });
-        toast.success(`Evidence securely attached! (Uploaded from ${distance.toFixed(1)}km away)`);
+        toast.success(t('success_toast', { distance: distance.toFixed(1) }));
         setIsVerifying(false);
         handleClose();
       }, 1000);
     };
 
     if (!navigator.geolocation) {
-      toast.error("Geolocation is not supported by your browser");
+      toast.error(t('geo_unsupported'));
       setIsVerifying(false);
       return;
     }
@@ -169,7 +171,7 @@ export default function EvidenceUploadModal({ project, isOpen, onClose }: Eviden
       },
       (error) => {
         // Intentionally suppressing console log to prevent Next.js dev overlay popups
-        toast.error("Failed to acquire GPS coordinates. Please allow location access.");
+        toast.error(t('gps_error'));
         setIsVerifying(false);
       },
       { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
@@ -181,7 +183,7 @@ export default function EvidenceUploadModal({ project, isOpen, onClose }: Eviden
       <DialogContent className="sm:max-w-[600px] bg-background">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-xl text-primary">
-            <Camera size={20}/> On-Site Evidence Capture
+            <Camera size={20}/> {t('title')}
           </DialogTitle>
         </DialogHeader>
 
@@ -232,16 +234,16 @@ export default function EvidenceUploadModal({ project, isOpen, onClose }: Eviden
                 onClick={retakePhoto}
                 className="rounded-full shadow-sm flex items-center gap-2"
               >
-                <RefreshCw size={16} /> Retake Photo
+                <RefreshCw size={16} /> {t('retake_photo')}
               </Button>
             )}
           </div>
 
           <div className="w-full mb-6 space-y-4">
             <div className="space-y-2">
-              <Label>Notes (Optional)</Label>
+              <Label>{t('notes_label')}</Label>
               <Textarea 
-                placeholder="Any additional details about what you captured?"
+                placeholder={t('notes_placeholder')}
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
                 rows={2}
@@ -256,15 +258,15 @@ export default function EvidenceUploadModal({ project, isOpen, onClose }: Eviden
                   onCheckedChange={(checked) => setIsAnonymous(checked as boolean)}
                 />
                 <Label htmlFor="modal-anonymous" className="font-normal cursor-pointer">
-                  Submit Anonymously
+                  {t('submit_anon')}
                 </Label>
               </div>
               
               {!isAnonymous && (
                 <div className="space-y-2">
-                  <Label>Your Name</Label>
+                  <Label>{t('your_name')}</Label>
                   <Input 
-                    placeholder="Enter your name" 
+                    placeholder={t('enter_name')} 
                     value={submitterName}
                     onChange={(e) => setSubmitterName(e.target.value)}
                   />
@@ -274,13 +276,13 @@ export default function EvidenceUploadModal({ project, isOpen, onClose }: Eviden
           </div>
 
           <div className="flex justify-end gap-3 pt-4 border-t border-border w-full">
-            <Button variant="outline" onClick={handleClose} disabled={isVerifying}>Cancel</Button>
+            <Button variant="outline" onClick={handleClose} disabled={isVerifying}>{t('cancel')}</Button>
             <Button 
               onClick={handleUpload}
               disabled={!capturedImage || isVerifying}
               className="flex items-center gap-2"
             >
-              <MapPin size={16} /> {isVerifying ? 'Verifying...' : 'Verify Location & Submit'}
+              <MapPin size={16} /> {isVerifying ? t('verifying') : t('verify_submit')}
             </Button>
           </div>
         </div>

@@ -20,9 +20,11 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
+import { useTranslations } from 'next-intl';
 
 export default function ExpertDashboard() {
   const { projects, expertAuth, setExpertAuth, auditProject, expertWalletAddress } = useAppStore();
+  const t = useTranslations('ExpertDashboard');
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [verifiedValue, setVerifiedValue] = useState<string>('');
   const [auditorNote, setAuditorNote] = useState<string>('');
@@ -63,9 +65,9 @@ export default function ExpertDashboard() {
         <div className="w-20 h-20 bg-green-50 dark:bg-green-900/20 rounded-full flex items-center justify-center mb-6">
           <ShieldCheck size={40} className="text-green-600 dark:text-green-400" />
         </div>
-        <h2 className="text-2xl font-bold text-card-foreground mb-2">Expert Oracle Access</h2>
+        <h2 className="text-2xl font-bold text-card-foreground mb-2">{t('oracle_access')}</h2>
         <p className="text-muted-foreground text-center max-w-md mb-8">
-          Connect your verified auditor wallet to review community consensus reports and cryptographically sign discrepancy findings to the Arc blockchain.
+          {t('oracle_desc')}
         </p>
         <Button 
           size="lg" 
@@ -73,7 +75,7 @@ export default function ExpertDashboard() {
           className="bg-primary hover:bg-primary/90 h-12 px-8 text-base rounded-xl flex items-center gap-2 text-white"
         >
           <Wallet size={18} />
-          Authenticate Auditor Credentials
+          {t('authenticate')}
         </Button>
       </div>
     );
@@ -83,23 +85,23 @@ export default function ExpertDashboard() {
     <div className="bg-card rounded-2xl shadow-sm border border-border overflow-hidden">
       <div className="p-6 border-b border-border bg-muted/30 flex flex-col sm:flex-row gap-4 sm:items-center justify-between">
         <div>
-          <h2 className="text-xl font-bold text-card-foreground">Pending Audits</h2>
-          <p className="text-sm text-muted-foreground">Review and sign physical value verification.</p>
+          <h2 className="text-xl font-bold text-card-foreground">{t('pending_audits')}</h2>
+          <p className="text-sm text-muted-foreground">{t('review_sign')}</p>
         </div>
         <div className="px-4 py-2 bg-background rounded-lg border border-border text-sm font-mono flex items-center gap-2 shadow-sm text-card-foreground">
           <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
-          0x7A2...F91E (Verified Civil Engineer)
+          0x7A2...F91E ({t('verified_engineer')})
         </div>
       </div>
 
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>Project Name</TableHead>
-            <TableHead>Location</TableHead>
-            <TableHead>Claimed Budget (NGN)</TableHead>
-            <TableHead>Community Status</TableHead>
-            <TableHead>Action</TableHead>
+            <TableHead>{t('project_name')}</TableHead>
+            <TableHead>{t('location')}</TableHead>
+            <TableHead>{t('claimed_budget')}</TableHead>
+            <TableHead>{t('community_status')}</TableHead>
+            <TableHead>{t('action')}</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -111,11 +113,11 @@ export default function ExpertDashboard() {
               <TableCell>
                 {record.status === 'community_verified' ? (
                   <Badge variant="default" className="bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400 hover:bg-green-100">
-                    Ready for Audit
+                    {t('ready_for_audit')}
                   </Badge>
                 ) : (
                   <Badge variant="secondary" className="bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400 hover:bg-yellow-100">
-                    Awaiting Consensus
+                    {t('awaiting_consensus')}
                   </Badge>
                 )}
               </TableCell>
@@ -126,7 +128,7 @@ export default function ExpertDashboard() {
                   onClick={() => handleOpenAudit(record)}
                   className="bg-primary hover:bg-primary/90 text-white"
                 >
-                  Perform Audit
+                  {t('perform_audit')}
                 </Button>
               </TableCell>
             </TableRow>
@@ -134,7 +136,7 @@ export default function ExpertDashboard() {
           {pendingAudits.length === 0 && (
             <TableRow>
               <TableCell colSpan={5} className="text-center py-8 text-muted-foreground">
-                No pending audits at this time.
+                {t('no_pending')}
               </TableCell>
             </TableRow>
           )}
@@ -145,18 +147,18 @@ export default function ExpertDashboard() {
         <DialogContent className="sm:max-w-[500px]">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <Calculator className="text-primary"/> Audit Verification
+              <Calculator className="text-primary"/> {t('audit_verification')}
             </DialogTitle>
           </DialogHeader>
 
           {selectedProject && (
             <div className="space-y-6 mt-4">
               <div className="bg-muted/50 p-4 rounded-xl border border-border">
-                <p className="text-sm text-muted-foreground mb-1">Project</p>
+                <p className="text-sm text-muted-foreground mb-1">{t('project_lbl')}</p>
                 <p className="font-bold text-foreground">{selectedProject.project_name}</p>
                 
                 <div className="mt-4 pt-4 border-t border-border">
-                  <p className="text-sm text-muted-foreground mb-1">Claimed Government Budget</p>
+                  <p className="text-sm text-muted-foreground mb-1">{t('claimed_gov_budget')}</p>
                   <p className="text-xl font-mono text-foreground">
                     ₦ {selectedProject.financials.total_budget_claimed_local_currency.toLocaleString()}
                   </p>
@@ -165,7 +167,7 @@ export default function ExpertDashboard() {
 
               <div>
                 <label className="block text-sm font-medium text-foreground mb-2">
-                  Enter Verified Physical Value (NGN)
+                  {t('enter_verified_value')}
                 </label>
                 <div className="relative">
                   <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground font-mono">₦</span>
@@ -178,17 +180,17 @@ export default function ExpertDashboard() {
                   />
                 </div>
                 <p className="text-xs text-muted-foreground mt-2">
-                  Based on submitted photographic evidence and engineering estimation.
+                  {t('based_on_evidence')}
                 </p>
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-foreground mb-2">
-                  Public Audit Note (Optional)
+                  {t('audit_note')}
                 </label>
                 <textarea
                   className="flex min-h-[80px] w-full rounded-lg border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
-                  placeholder="Explain your findings. This note will be signed by your wallet and visible to the public."
+                  placeholder={t('explain_findings')}
                   value={auditorNote}
                   onChange={(e) => setAuditorNote(e.target.value)}
                 />
@@ -201,7 +203,7 @@ export default function ExpertDashboard() {
                 onClick={handleSignTransaction}
               >
                 <FileSignature size={20}/> 
-                {isSigning ? 'Signing on Blockchain...' : 'Sign Discrepancy Report'}
+                {isSigning ? t('signing') : t('sign_report')}
               </Button>
             </div>
           )}

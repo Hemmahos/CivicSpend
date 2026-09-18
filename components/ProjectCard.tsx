@@ -7,21 +7,23 @@ import { ThumbsUp, ThumbsDown, MapPin, CheckCircle, AlertTriangle, Link as LinkI
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 
 export default function ProjectCard({ project }: { project: Project }) {
   const { voteProject, deviceVotes } = useAppStore();
   const userVote = deviceVotes?.[project.id];
+  const t = useTranslations('ProjectCard');
 
   const getStatusTag = () => {
     switch(project.status) {
       case 'pending':
-        return <Badge variant="secondary" className="bg-amber-100 text-amber-800 hover:bg-amber-100 dark:bg-amber-900/30 dark:text-amber-400 flex items-center gap-1"><AlertTriangle size={12}/> Pending Consensus</Badge>;
+        return <Badge variant="secondary" className="bg-amber-100 text-amber-800 hover:bg-amber-100 dark:bg-amber-900/30 dark:text-amber-400 flex items-center gap-1"><AlertTriangle size={12}/> {t('pending')}</Badge>;
       case 'community_verified':
-        return <Badge variant="secondary" className="bg-green-100 text-green-800 hover:bg-green-100 dark:bg-green-900/30 dark:text-green-400">Awaiting Audit</Badge>;
+        return <Badge variant="secondary" className="bg-green-100 text-green-800 hover:bg-green-100 dark:bg-green-900/30 dark:text-green-400">{t('awaiting_audit')}</Badge>;
       case 'expert_audited':
-        return <Badge variant="secondary" className="bg-emerald-100 text-emerald-800 hover:bg-emerald-100 dark:bg-emerald-900/30 dark:text-emerald-400 flex items-center gap-1"><CheckCircle size={12}/> Expert Audited</Badge>;
+        return <Badge variant="secondary" className="bg-emerald-100 text-emerald-800 hover:bg-emerald-100 dark:bg-emerald-900/30 dark:text-emerald-400 flex items-center gap-1"><CheckCircle size={12}/> {t('expert_audited')}</Badge>;
       case 'disputed':
-        return <Badge variant="destructive">Disputed</Badge>;
+        return <Badge variant="destructive">{t('disputed')}</Badge>;
       default:
         return null;
     }
@@ -30,11 +32,11 @@ export default function ProjectCard({ project }: { project: Project }) {
   const getOriginTag = () => {
     switch (project.origin) {
       case 'ai_scan':
-        return <Badge variant="outline" className="text-purple-600 border-purple-200 bg-purple-50 hover:bg-purple-50 dark:text-purple-400 dark:border-purple-900/50 dark:bg-purple-950/20 flex items-center gap-1"><Bot size={12}/> AI Discovered</Badge>;
+        return <Badge variant="outline" className="text-purple-600 border-purple-200 bg-purple-50 hover:bg-purple-50 dark:text-purple-400 dark:border-purple-900/50 dark:bg-purple-950/20 flex items-center gap-1"><Bot size={12}/> {t('ai_discovered')}</Badge>;
       case 'community':
-        return <Badge variant="outline" className="text-sky-600 border-sky-200 bg-sky-50 hover:bg-sky-50 dark:text-sky-400 dark:border-sky-900/50 dark:bg-sky-950/20 flex items-center gap-1"><Users size={12}/> Community Added</Badge>;
+        return <Badge variant="outline" className="text-sky-600 border-sky-200 bg-sky-50 hover:bg-sky-50 dark:text-sky-400 dark:border-sky-900/50 dark:bg-sky-950/20 flex items-center gap-1"><Users size={12}/> {t('community_added')}</Badge>;
       case 'government':
-        return <Badge variant="outline" className="text-orange-600 border-orange-200 bg-orange-50 hover:bg-orange-50 dark:text-orange-400 dark:border-orange-900/50 dark:bg-orange-950/20 flex items-center gap-1"><Building size={12}/> Government</Badge>;
+        return <Badge variant="outline" className="text-orange-600 border-orange-200 bg-orange-50 hover:bg-orange-50 dark:text-orange-400 dark:border-orange-900/50 dark:bg-orange-950/20 flex items-center gap-1"><Building size={12}/> {t('government')}</Badge>;
       default:
         return null;
     }
@@ -56,7 +58,7 @@ export default function ProjectCard({ project }: { project: Project }) {
           <MapPin size={14} /> {project.location.specific_address}, {project.location.state_or_region}
         </p>
         <p className="text-xs font-medium text-muted-foreground/70 mt-2 flex items-center gap-1">
-          <LinkIcon size={12} /> {project.sources?.length || 0} Source{project.sources?.length !== 1 ? 's' : ''} attached
+          <LinkIcon size={12} /> {project.sources?.length || 0} {t('sources_attached')}
         </p>
 
         <div className="mt-4 flex flex-col gap-4 border-t border-border pt-4">
@@ -77,7 +79,7 @@ export default function ProjectCard({ project }: { project: Project }) {
             </div>
             
             <Link href={`/project/${project.id}`}>
-              <Button variant="ghost" className="text-primary font-bold hover:text-primary/80 hover:bg-primary/10">View Details</Button>
+              <Button variant="ghost" className="text-primary font-bold hover:text-primary/80 hover:bg-primary/10">{t('view_details')}</Button>
             </Link>
           </div>
         </div>

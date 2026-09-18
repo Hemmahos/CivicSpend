@@ -7,9 +7,11 @@ import { useAppStore } from '@/store/useAppStore';
 import { MapPin, Navigation } from 'lucide-react';
 import Link from 'next/link';
 import { useTheme } from 'next-themes';
+import { useTranslations } from 'next-intl';
 
 export default function LiveProjectMap() {
   const { projects } = useAppStore();
+  const t = useTranslations('LiveMap');
   const [viewState, setViewState] = useState({
     latitude: 9.0765, // Default to Abuja
     longitude: 7.3986,
@@ -64,9 +66,9 @@ export default function LiveProjectMap() {
     return (
       <div className="w-full h-48 md:h-80 bg-slate-50 dark:bg-[#121212] rounded-3xl flex flex-col items-center justify-center border border-slate-200 dark:border-zinc-800">
         <MapPin className="text-slate-400 dark:text-zinc-600 mb-2" size={32} />
-        <p className="text-slate-500 dark:text-zinc-400 font-bold uppercase tracking-wider text-sm">Mapbox Token Required</p>
+        <p className="text-slate-500 dark:text-zinc-400 font-bold uppercase tracking-wider text-sm">{t('token_required')}</p>
         <p className="text-xs text-slate-400 dark:text-zinc-500 mt-2 max-w-sm text-center">
-          Please add a valid Mapbox access token to `NEXT_PUBLIC_MAPBOX_TOKEN` in `.env.local` to view the interactive map.
+          {t('token_desc')}
         </p>
       </div>
     );
@@ -123,11 +125,11 @@ export default function LiveProjectMap() {
       {/* Geolocation Status Indicator */}
       <div className="absolute top-4 left-4 bg-white/90 dark:bg-[#131314]/80 backdrop-blur-md px-4 py-2 rounded-full shadow-lg border border-slate-200 dark:border-[#282A2C] flex items-center gap-2 text-xs font-bold text-slate-700 dark:text-[#E3E3E3] pointer-events-none">
         {userLocation ? (
-          <><Navigation size={14} className="text-primary" /> Location Active</>
+          <><Navigation size={14} className="text-primary" /> {t('location_active')}</>
         ) : locationError ? (
-          <><Navigation size={14} className="text-red-500" /> Location Denied</>
+          <><Navigation size={14} className="text-red-500" /> {t('location_denied')}</>
         ) : (
-          <><span className="w-2 h-2 rounded-full bg-primary animate-pulse block"></span> Locating...</>
+          <><span className="w-2 h-2 rounded-full bg-primary animate-pulse block"></span> {t('locating')}</>
         )}
       </div>
     </div>

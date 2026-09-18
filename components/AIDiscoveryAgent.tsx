@@ -13,6 +13,7 @@ import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { toast } from 'sonner';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { useTranslations } from 'next-intl';
 
 interface AIDiscoveryAgentProps {
   isOpen: boolean;
@@ -61,6 +62,7 @@ export default function AIDiscoveryAgent({ isOpen, onClose }: AIDiscoveryAgentPr
   const [scanStatus, setScanStatus] = useState<'idle' | 'scanning' | 'parsing' | 'done'>('idle');
   const [selectedProjects, setSelectedProjects] = useState<string[]>(mockDiscoveredProjects.map(p => p.id));
   const [isPublishing, setIsPublishing] = useState(false);
+  const t = useTranslations('AIDiscovery');
 
   const [discoveredProjects, setDiscoveredProjects] = useState<any[]>([]);
 
@@ -123,7 +125,7 @@ export default function AIDiscoveryAgent({ isOpen, onClose }: AIDiscoveryAgentPr
         });
       });
 
-      toast.success(`${projectsToAdd.length} AI-discovered project(s) added to ledger.`);
+      toast.success(t('success_toast', { count: projectsToAdd.length }));
       setIsPublishing(false);
       onClose();
     }, 1000);
@@ -140,7 +142,7 @@ export default function AIDiscoveryAgent({ isOpen, onClose }: AIDiscoveryAgentPr
       <DialogContent className="sm:max-w-[700px] bg-background">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-[#40AFD6]">
-            <Bot size={20}/> AI Project Discovery
+            <Bot size={20}/> {t('title')}
           </DialogTitle>
         </DialogHeader>
 
@@ -151,12 +153,12 @@ export default function AIDiscoveryAgent({ isOpen, onClose }: AIDiscoveryAgentPr
               <div className="w-20 h-20 bg-[#40AFD6]/10 dark:bg-[#40AFD6]/20 rounded-full flex items-center justify-center mb-6">
                 <Radar size={40} className="text-[#40AFD6]" />
               </div>
-              <h3 className="text-xl font-bold text-foreground mb-2">Deploy AI Scraper</h3>
+              <h3 className="text-xl font-bold text-foreground mb-2">{t('deploy_title')}</h3>
               <p className="text-muted-foreground max-w-md mx-auto mb-8">
-                Our AI Oracle can scan recent government press releases, federal budgets, and verified news outlets to discover newly announced public infrastructure projects in your region.
+                {t('deploy_desc')}
               </p>
               <Button size="lg" onClick={startScan} className="bg-[#40AFD6] hover:bg-[#40AFD6]/90 text-white px-8 flex items-center gap-2">
-                <Search size={18} /> Initiate Scan
+                <Search size={18} /> {t('initiate_scan')}
               </Button>
             </div>
           )}
@@ -172,7 +174,7 @@ export default function AIDiscoveryAgent({ isOpen, onClose }: AIDiscoveryAgentPr
                 </div>
               </div>
               <h3 className="text-lg font-semibold text-foreground mb-2">
-                {scanStatus === 'scanning' ? 'Scanning News & Databases...' : 'Parsing Financial Data & Cross-referencing...'}
+                {scanStatus === 'scanning' ? t('scanning') : t('parsing')}
               </h3>
               <div className="text-sm text-muted-foreground font-mono flex flex-col items-center gap-1">
                 <span className={scanStatus === 'scanning' ? 'text-[#40AFD6]' : 'text-muted-foreground'}>&gt; ping gov.ng/budgets ... 200 OK</span>
@@ -186,9 +188,9 @@ export default function AIDiscoveryAgent({ isOpen, onClose }: AIDiscoveryAgentPr
             <div className="py-2 flex flex-col h-[500px]">
               <div className="flex items-center justify-between mb-4 border-b border-border pb-4 shrink-0">
                 <h3 className="text-lg font-bold text-foreground flex items-center gap-2">
-                  <CheckCircle2 className="text-green-500"/> Found {discoveredProjects.length} Projects
+                  <CheckCircle2 className="text-green-500"/> {t('found_projects', { count: discoveredProjects.length })}
                 </h3>
-                <p className="text-sm text-muted-foreground">Select projects to add to the public ledger</p>
+                <p className="text-sm text-muted-foreground">{t('select_projects')}</p>
               </div>
 
               <ScrollArea className="flex-1 pr-4 -mr-4">
@@ -222,7 +224,7 @@ export default function AIDiscoveryAgent({ isOpen, onClose }: AIDiscoveryAgentPr
 
                             <div className="bg-background rounded border border-border p-2">
                               <p className="text-xs font-semibold text-foreground mb-1 flex items-center gap-1">
-                                <LinkIcon size={12}/> AI Extracted Sources
+                                <LinkIcon size={12}/> {t('ai_sources')}
                               </p>
                               <ul className="space-y-1">
                                 {proj.sources.map((src: string, i: number) => (
@@ -239,9 +241,9 @@ export default function AIDiscoveryAgent({ isOpen, onClose }: AIDiscoveryAgentPr
                       <div className="w-16 h-16 bg-muted/50 rounded-full flex items-center justify-center mb-4">
                         <CheckCircle2 size={32} className="text-muted-foreground" />
                       </div>
-                      <h4 className="text-lg font-bold text-foreground mb-2">You're all caught up!</h4>
+                      <h4 className="text-lg font-bold text-foreground mb-2">{t('caught_up')}</h4>
                       <p className="text-sm text-muted-foreground max-w-sm px-4">
-                        Our AI didn't find any new public infrastructure announcements in your region today. All recently announced projects are already being tracked on the CivicSpend ledger.
+                        {t('no_new_projects')}
                       </p>
                     </div>
                   )}
@@ -249,13 +251,13 @@ export default function AIDiscoveryAgent({ isOpen, onClose }: AIDiscoveryAgentPr
               </ScrollArea>
 
               <div className="flex justify-end gap-3 mt-4 pt-4 border-t border-border shrink-0">
-                <Button variant="outline" onClick={onClose} disabled={isPublishing}>Discard</Button>
+                <Button variant="outline" onClick={onClose} disabled={isPublishing}>{t('discard')}</Button>
                 <Button 
                   onClick={handlePublish} 
                   disabled={selectedProjects.length === 0 || isPublishing}
                   className="bg-[#40AFD6] hover:bg-[#40AFD6]/90 text-white flex items-center gap-2"
                 >
-                  {isPublishing ? 'Publishing...' : `Publish ${selectedProjects.length} to Ledger`} <ChevronRight size={16}/>
+                  {isPublishing ? t('publishing') : t('publish', { count: selectedProjects.length })} <ChevronRight size={16}/>
                 </Button>
               </div>
             </div>

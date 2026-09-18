@@ -10,6 +10,7 @@ import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 
 export default function UploadForm() {
   const router = useRouter();
@@ -19,6 +20,7 @@ export default function UploadForm() {
   const [notes, setNotes] = useState('');
   const [submitterName, setSubmitterName] = useState('');
   const [isAnonymous, setIsAnonymous] = useState(false);
+  const t = useTranslations('UploadForm');
 
   const handleSimulatedUpload = () => {
     setUploadStatus('uploading');
@@ -88,7 +90,7 @@ export default function UploadForm() {
   return (
     <div className="bg-card rounded-2xl shadow-sm border border-border p-6 max-w-md w-full mx-auto">
       <h2 className="text-xl font-bold text-card-foreground mb-6 flex items-center gap-2">
-        <Camera className="text-primary" /> Report Infrastructure
+        <Camera className="text-primary" /> {t('title')}
       </h2>
 
       {uploadStatus === 'idle' && (
@@ -112,8 +114,8 @@ export default function UploadForm() {
             ) : (
               <div className="text-center text-muted-foreground z-10 pointer-events-none">
                 <Upload className="w-10 h-10 mx-auto mb-3 opacity-80" />
-                <p className="font-medium text-foreground">Tap to Upload Photo/Video</p>
-                <p className="text-xs mt-1">Geo-tags will be extracted automatically</p>
+                <p className="font-medium text-foreground">{t('drag_drop')}</p>
+                <p className="text-xs mt-1">{t('support')}</p>
               </div>
             )}
           </div>
@@ -125,7 +127,7 @@ export default function UploadForm() {
 
           <div className="space-y-2">
             <Label className="flex items-center gap-1 text-foreground">
-              <MapPin size={16}/> Notes / Cross streets
+              <MapPin size={16}/> {t('caption_label')}
             </Label>
             <Textarea 
               rows={3} 
@@ -169,7 +171,7 @@ export default function UploadForm() {
             disabled={!file}
             onClick={handleSimulatedUpload}
           >
-            Submit Report
+            {t('upload')}
           </Button>
         </motion.div>
       )}

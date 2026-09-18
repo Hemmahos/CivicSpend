@@ -23,8 +23,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   }, []);
 
   const navItems = [
-    { name: 'Feed', path: '/' },
-    { name: 'Audit', path: '/audit' },
+    { name: t('feed'), path: '/' },
+    { name: t('expert_audit'), path: '/audit' },
   ];
 
   // We check path without locale, or use logic depending on implementation
@@ -77,7 +77,6 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
           {/* Actions - Right */}
           <div className="flex items-center gap-3">
-            <LanguageSwitcher />
             <button
               onClick={() => setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')}
               className="p-2 rounded-full text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
@@ -89,14 +88,14 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             {expertAuth ? (
               <div className="px-3 py-1.5 rounded-full bg-green-500/10 text-green-600 dark:text-green-400 font-medium text-xs flex items-center gap-1.5 border border-green-500/20">
                 <ShieldCheck size={14} />
-                <span className="hidden sm:inline">Oracle Verified</span>
+                <span className="hidden sm:inline">{t('oracle_verified')}</span>
               </div>
             ) : (
               <Link 
                 href="/audit" 
                 className="px-4 py-2 rounded-full bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors shadow-sm hidden sm:block"
               >
-                Join Oracle
+                {t('join_oracle')}
               </Link>
             )}
           </div>

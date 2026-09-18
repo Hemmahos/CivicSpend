@@ -21,6 +21,9 @@ export const metadata: Metadata = {
   title: "CivicSpend - Open Government Auditing",
   description: "Community-driven accountability platform for tracking and verifying civic projects.",
   manifest: "/manifest.json",
+  icons: {
+    icon: '/icon.svg',
+  }
 };
 
 export default async function RootLayout({

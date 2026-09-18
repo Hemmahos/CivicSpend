@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import EvidenceUploadModal from '@/components/EvidenceUploadModal';
+import { useTranslations } from 'next-intl';
 
 export default function ProjectDetailsPage() {
   const params = useParams();
@@ -16,6 +17,7 @@ export default function ProjectDetailsPage() {
   const { projects } = useAppStore();
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const t = useTranslations('ProjectDetails');
   
   const id = Array.isArray(params.id) ? params.id[0] : params.id;
   const project = projects.find((p) => p.id === id);
@@ -23,8 +25,8 @@ export default function ProjectDetailsPage() {
   if (!project) {
     return (
       <div className="p-8 text-center flex flex-col items-center justify-center min-h-[50vh]">
-        <h2 className="text-2xl font-bold text-foreground">Project not found</h2>
-        <Button onClick={() => router.push('/')} className="mt-6">Back to Home</Button>
+        <h2 className="text-2xl font-bold text-foreground">{t('project_not_found')}</h2>
+        <Button onClick={() => router.push('/')} className="mt-6">{t('back_to_home')}</Button>
       </div>
     );
   }
@@ -34,11 +36,11 @@ export default function ProjectDetailsPage() {
   const getOriginTag = () => {
     switch (project.origin) {
       case 'ai_scan':
-        return <Badge variant="outline" className="text-purple-600 border-purple-200 bg-purple-50 hover:bg-purple-50 dark:text-purple-400 dark:border-purple-900/50 dark:bg-purple-950/20 flex items-center gap-1"><Bot size={12}/> AI Discovered</Badge>;
+        return <Badge variant="outline" className="text-purple-600 border-purple-200 bg-purple-50 hover:bg-purple-50 dark:text-purple-400 dark:border-purple-900/50 dark:bg-purple-950/20 flex items-center gap-1"><Bot size={12}/> {t('ai_discovered')}</Badge>;
       case 'community':
-        return <Badge variant="outline" className="text-sky-600 border-sky-200 bg-sky-50 hover:bg-sky-50 dark:text-sky-400 dark:border-sky-900/50 dark:bg-sky-950/20 flex items-center gap-1"><Users size={12}/> Community Added</Badge>;
+        return <Badge variant="outline" className="text-sky-600 border-sky-200 bg-sky-50 hover:bg-sky-50 dark:text-sky-400 dark:border-sky-900/50 dark:bg-sky-950/20 flex items-center gap-1"><Users size={12}/> {t('community_added')}</Badge>;
       case 'government':
-        return <Badge variant="outline" className="text-orange-600 border-orange-200 bg-orange-50 hover:bg-orange-50 dark:text-orange-400 dark:border-orange-900/50 dark:bg-orange-950/20 flex items-center gap-1"><Building size={12}/> Government</Badge>;
+        return <Badge variant="outline" className="text-orange-600 border-orange-200 bg-orange-50 hover:bg-orange-50 dark:text-orange-400 dark:border-orange-900/50 dark:bg-orange-950/20 flex items-center gap-1"><Building size={12}/> {t('government')}</Badge>;
       default:
         return null;
     }
@@ -53,7 +55,7 @@ export default function ProjectDetailsPage() {
           onClick={() => router.back()}
           className="rounded-full shadow-sm"
         >
-          <ArrowLeft size={16} className="mr-2" /> Back to Feed
+          <ArrowLeft size={16} className="mr-2" /> {t('back')}
         </Button>
       </div>
 
@@ -61,9 +63,9 @@ export default function ProjectDetailsPage() {
       <div className="bg-card rounded-3xl shadow-sm border border-border overflow-hidden mb-6">
         <div className="p-8">
           <div className="flex flex-wrap items-center gap-2 mb-4">
-            {project.status === 'pending' && <Badge variant="secondary" className="bg-amber-100 text-amber-800 hover:bg-amber-100 dark:bg-amber-900/30 dark:text-amber-400 flex items-center gap-1"><AlertTriangle size={12}/> Pending Consensus</Badge>}
-            {project.status === 'community_verified' && <Badge variant="secondary" className="bg-green-100 text-green-800 hover:bg-green-100 dark:bg-green-900/30 dark:text-green-400">Awaiting Audit</Badge>}
-            {project.status === 'expert_audited' && <Badge variant="secondary" className="bg-emerald-100 text-emerald-800 hover:bg-emerald-100 dark:bg-emerald-900/30 dark:text-emerald-400 flex items-center gap-1"><CheckCircle size={12}/> Expert Audited</Badge>}
+            {project.status === 'pending' && <Badge variant="secondary" className="bg-amber-100 text-amber-800 hover:bg-amber-100 dark:bg-amber-900/30 dark:text-amber-400 flex items-center gap-1"><AlertTriangle size={12}/> {t('pending_consensus')}</Badge>}
+            {project.status === 'community_verified' && <Badge variant="secondary" className="bg-green-100 text-green-800 hover:bg-green-100 dark:bg-green-900/30 dark:text-green-400">{t('awaiting_audit')}</Badge>}
+            {project.status === 'expert_audited' && <Badge variant="secondary" className="bg-emerald-100 text-emerald-800 hover:bg-emerald-100 dark:bg-emerald-900/30 dark:text-emerald-400 flex items-center gap-1"><CheckCircle size={12}/> {t('expert_audited')}</Badge>}
             {getOriginTag()}
             <Badge variant="secondary" className="flex items-center gap-1"><MapPin size={12}/>{project.location.state_or_region}</Badge>
           </div>
@@ -75,20 +77,22 @@ export default function ProjectDetailsPage() {
             </p>
           </div>
         </div>
+      </div>
 
-        {/* Media Evidence */}
+      {/* Media Evidence - Moved out of the main card */}
+      <div className="bg-card rounded-3xl shadow-sm border border-border overflow-hidden mb-6">
         {project.evidences && project.evidences.length > 0 ? (
-          <div className="mt-6 border-t border-border pt-6 px-8 pb-8">
+          <div className="p-8">
             <div className="flex items-center justify-between mb-6">
               <h3 className="text-xl font-bold text-card-foreground flex items-center gap-2">
-                <Camera className="text-primary" /> Evidence Gallery
+                <Camera className="text-primary" /> {t('evidence_gallery')}
               </h3>
               <Button 
                 variant="outline"
                 size="sm"
                 onClick={() => setIsUploadModalOpen(true)}
               >
-                <Camera size={14} className="mr-2" /> Add Evidence
+                <Camera size={14} className="mr-2" /> {t('add_evidence')}
               </Button>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -101,9 +105,9 @@ export default function ProjectDetailsPage() {
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img src={evidence.mediaUrl} alt="Evidence" className="w-full h-full object-cover" />
                     <div className="absolute bottom-2 right-2 bg-black/60 backdrop-blur-sm text-white px-2 py-1 rounded-md text-[10px] font-mono flex flex-col items-end gap-0.5 pointer-events-none">
-                      <span>LAT: {project.location.lat.toFixed(5)}</span>
-                      <span>LNG: {project.location.lng.toFixed(5)}</span>
-                      <span className="text-green-400 flex items-center gap-1"><CheckCircle size={10} /> EXIF Verified</span>
+                      <span>{t('lat')}: {project.location.lat.toFixed(5)}</span>
+                      <span>{t('lng')}: {project.location.lng.toFixed(5)}</span>
+                      <span className="text-green-400 flex items-center gap-1"><CheckCircle size={10} /> {t('exif_verified')}</span>
                     </div>
                   </div>
                   <div className="pt-4 px-1 pb-1">
@@ -118,20 +122,20 @@ export default function ProjectDetailsPage() {
             </div>
           </div>
         ) : (
-          <div className="w-full bg-muted/50 p-8 border-t border-border flex flex-col items-center justify-center text-center mt-6 rounded-b-3xl">
+          <div className="w-full bg-muted/50 p-8 flex flex-col items-center justify-center text-center">
             <div className="w-16 h-16 bg-primary/10 dark:bg-primary/20 rounded-full flex items-center justify-center mb-4 text-primary">
               <Camera size={28} />
             </div>
-            <h3 className="text-lg font-bold text-card-foreground mb-2">Awaiting Community Evidence</h3>
+            <h3 className="text-lg font-bold text-card-foreground mb-2">{t('awaiting_evidence')}</h3>
             <p className="text-muted-foreground max-w-md mx-auto mb-6">
-              This project needs photographic evidence. If you are near the site, capture a geo-tagged photo to earn community reputation.
+              {t('needs_evidence')}
             </p>
             <Button 
               size="lg"
               className="bg-primary hover:bg-primary/90 text-primary-foreground shadow-md flex items-center gap-2"
               onClick={() => setIsUploadModalOpen(true)}
             >
-              <MapPin size={16} /> Verify Location & Capture Evidence
+              <MapPin size={16} /> {t('verify_capture')}
             </Button>
           </div>
         )}
@@ -156,7 +160,7 @@ export default function ProjectDetailsPage() {
       {/* AI Parsed Budget Data (Discrepancy Bar) */}
       <div className="bg-card rounded-3xl shadow-sm border border-border p-8 mb-6">
         <h3 className="text-xl font-bold text-card-foreground mb-6 flex items-center gap-2">
-          <FileText className="text-primary"/> AI Budget Analysis
+          <FileText className="text-primary"/> {t('ai_analysis')}
         </h3>
         <DiscrepancyBar 
           claimedBudget={project.financials.total_budget_claimed_local_currency} 
@@ -165,7 +169,7 @@ export default function ProjectDetailsPage() {
         
         {project.deliverables.length > 0 && (
           <div className="mt-6 border-t border-border pt-6">
-             <h4 className="font-semibold text-muted-foreground mb-4 text-sm uppercase tracking-wider">Required Deliverables</h4>
+             <h4 className="font-semibold text-muted-foreground mb-4 text-sm uppercase tracking-wider">{t('deliverables')}</h4>
              <ul className="space-y-3">
                {project.deliverables.map((item, idx) => (
                  <li key={idx} className="flex items-start gap-3 text-foreground text-sm font-medium">
@@ -182,7 +186,7 @@ export default function ProjectDetailsPage() {
       {project.sources && project.sources.length > 0 && (
         <div className="bg-card rounded-3xl shadow-sm border border-border p-8 mb-6">
           <h3 className="text-xl font-bold text-card-foreground mb-6 flex items-center gap-2">
-            <LinkIcon className="text-primary"/> Attached Sources
+            <LinkIcon className="text-primary"/> {t('attached_sources')}
           </h3>
           <ul className="space-y-3">
             {project.sources.map((source, i) => (
@@ -198,7 +202,7 @@ export default function ProjectDetailsPage() {
 
       {/* 3-Tier Validation Timeline */}
       <div className="bg-card rounded-3xl shadow-sm border border-border p-8">
-        <h3 className="text-xl font-bold text-card-foreground mb-8">Verification Trail</h3>
+        <h3 className="text-xl font-bold text-card-foreground mb-8">{t('verification_trail')}</h3>
         
         <div className="space-y-8">
           {/* Step 1 */}
@@ -208,8 +212,8 @@ export default function ProjectDetailsPage() {
               <Check size={14} strokeWidth={3} />
             </div>
             <div>
-              <p className="font-bold text-card-foreground">Citizen Upload</p>
-              <p className="text-xs text-muted-foreground mt-1 font-medium">Media & EXIF data anchored</p>
+              <p className="font-bold text-card-foreground">{t('citizen_upload')}</p>
+              <p className="text-xs text-muted-foreground mt-1 font-medium">{t('media_anchored')}</p>
             </div>
           </div>
 
@@ -222,11 +226,11 @@ export default function ProjectDetailsPage() {
               {isVerified ? <Check size={14} strokeWidth={3} /> : <span className="w-2 h-2 rounded-full bg-primary"></span>}
             </div>
             <div>
-              <p className="font-bold text-card-foreground">Community Consensus</p>
+              <p className="font-bold text-card-foreground">{t('community_consensus')}</p>
               <p className="text-xs text-muted-foreground mt-1 font-medium">
-                {project.upvotes} Upvotes / {project.downvotes} Downvotes
+                {project.upvotes} {t('upvotes')} / {project.downvotes} {t('downvotes')}
               </p>
-              {!isVerified && <p className="text-xs text-primary mt-2 animate-pulse font-bold">Gathering votes...</p>}
+              {!isVerified && <p className="text-xs text-primary mt-2 animate-pulse font-bold">{t('gathering_votes')}</p>}
             </div>
           </div>
 
@@ -238,15 +242,15 @@ export default function ProjectDetailsPage() {
                {project.status === 'expert_audited' ? <Check size={14} strokeWidth={3} /> : project.status === 'community_verified' ? <AlertTriangle size={14} /> : <span className="w-2 h-2 rounded-full bg-border"></span>}
             </div>
             <div>
-              <p className={`font-bold ${project.status === 'expert_audited' ? 'text-card-foreground' : 'text-muted-foreground'}`}>Oracle Audit</p>
+              <p className={`font-bold ${project.status === 'expert_audited' ? 'text-card-foreground' : 'text-muted-foreground'}`}>{t('oracle_audit')}</p>
               <p className="text-xs text-muted-foreground mt-1 font-medium">
-                {project.status === 'expert_audited' ? 'Expert cryptographic signature verified' : 'Awaiting expert assignment'}
+                {project.status === 'expert_audited' ? t('signature_verified') : t('awaiting_assignment')}
               </p>
               {project.status === 'expert_audited' && project.financials.expert_auditor_wallet && (
                 <div className="mt-3 p-3 bg-muted/40 rounded-lg border border-border">
                   <div className="flex items-center gap-2 mb-2 text-xs font-mono text-muted-foreground">
                     <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
-                    Signed by: {project.financials.expert_auditor_wallet.substring(0, 6)}...{project.financials.expert_auditor_wallet.substring(36)}
+                    {t('signed_by')} {project.financials.expert_auditor_wallet.substring(0, 6)}...{project.financials.expert_auditor_wallet.substring(36)}
                   </div>
                   {project.financials.expert_auditor_note && (
                     <p className="text-sm text-foreground italic border-l-2 border-primary pl-2">

@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
+import { useTranslations } from 'next-intl';
 
 interface DiscrepancyBarProps {
   claimedBudget: number;
@@ -14,6 +15,7 @@ export default function DiscrepancyBar({
   verifiedValue, 
   currency = '₦' 
 }: DiscrepancyBarProps) {
+  const t = useTranslations('DiscrepancyBar');
   
   if (claimedBudget === 0) return null;
 
@@ -32,13 +34,13 @@ export default function DiscrepancyBar({
     <div className="w-full">
       <div className="flex justify-between items-end mb-2">
         <div>
-          <span className="text-xs text-zinc-500 dark:text-zinc-400 uppercase tracking-wider font-semibold">Claimed Budget</span>
+          <span className="text-xs text-zinc-500 dark:text-zinc-400 uppercase tracking-wider font-semibold">{t('claimed_budget')}</span>
           <div className="text-xl font-bold text-zinc-900 dark:text-white">{formatCurrency(claimedBudget)}</div>
         </div>
         
         {isAudited && (
           <div className="text-right">
-             <span className="text-xs text-zinc-500 dark:text-zinc-400 uppercase tracking-wider font-semibold">Verified Value</span>
+             <span className="text-xs text-zinc-500 dark:text-zinc-400 uppercase tracking-wider font-semibold">{t('verified_value')}</span>
              <div className="text-xl font-bold text-green-600 dark:text-green-400">{formatCurrency(verifiedValue)}</div>
           </div>
         )}
@@ -59,7 +61,7 @@ export default function DiscrepancyBar({
         {isAudited && missingFunds > 0 && (
           <div className="absolute top-0 bottom-0 right-0 left-0 pointer-events-none flex items-center justify-end pr-3">
              <span className="text-xs font-bold text-red-600 dark:text-red-400 bg-red-100 dark:bg-red-950/80 px-2 py-0.5 rounded-full z-10 opacity-90 border border-red-200 dark:border-red-900">
-               Discrepancy: {formatCurrency(missingFunds)}
+               {t('discrepancy')}: {formatCurrency(missingFunds)}
              </span>
           </div>
         )}
@@ -68,7 +70,7 @@ export default function DiscrepancyBar({
       {!isAudited && (
          <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-2 italic flex items-center gap-1 font-medium">
            <span className="w-2 h-2 rounded-full bg-yellow-500 animate-pulse"></span> 
-           Awaiting expert audit to verify physical value.
+           {t('awaiting_audit')}
          </p>
       )}
     </div>
