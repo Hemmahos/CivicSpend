@@ -62,7 +62,10 @@ export default function EvidenceUploadModal({ project, isOpen, onClose }: Eviden
     setCameraError(null);
     try {
       const mediaStream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: 'environment' }
+        video: { 
+          facingMode: 'environment',
+          aspectRatio: { ideal: 1 }
+        }
       });
       setStream(mediaStream);
       if (videoRef.current) {
@@ -97,11 +100,17 @@ export default function EvidenceUploadModal({ project, isOpen, onClose }: Eviden
     if (videoRef.current && canvasRef.current) {
       const video = videoRef.current;
       const canvas = canvasRef.current;
-      canvas.width = video.videoWidth || 640;
-      canvas.height = video.videoHeight || 480;
+      
+      const size = Math.min(video.videoWidth, video.videoHeight) || 640;
+      canvas.width = size;
+      canvas.height = size;
+      
       const ctx = canvas.getContext('2d');
       if (ctx) {
-        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+        const sx = video.videoWidth > video.videoHeight ? (video.videoWidth - video.videoHeight) / 2 : 0;
+        const sy = video.videoHeight > video.videoWidth ? (video.videoHeight - video.videoWidth) / 2 : 0;
+        
+        ctx.drawImage(video, sx, sy, size, size, 0, 0, size, size);
         const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
         setCapturedImage(dataUrl);
         stopCamera();
@@ -171,7 +180,7 @@ export default function EvidenceUploadModal({ project, isOpen, onClose }: Eviden
 
         <div className="mt-4 flex flex-col items-center">
           {/* Camera Viewfinder */}
-          <div className="relative w-full aspect-video bg-black rounded-xl overflow-hidden mb-6 flex flex-col items-center justify-center border-2 border-border">
+          <div className="relative w-full aspect-square bg-black rounded-xl overflow-hidden mb-6 flex flex-col items-center justify-center border-2 border-border">
             {!capturedImage ? (
               <>
                 <video 
