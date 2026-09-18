@@ -5,8 +5,6 @@ import { GoogleGenAI } from '@google/genai';
 export const maxDuration = 60;
 
 const parser = new Parser();
-// The GoogleGenAI SDK reads from process.env.GEMINI_API_KEY by default if not passed.
-const ai = new GoogleGenAI({});
 
 export async function POST(request: Request) {
   try {
@@ -53,8 +51,8 @@ export async function POST(request: Request) {
     }
     const uniqueArticles = Array.from(uniqueArticlesMap.values());
     
-    // Feed the top 25 articles to Gemini to maximize project discovery
-    const articles = uniqueArticles.slice(0, 25).map(item => ({
+    // Feed the top 15 articles to Gemini to maximize project discovery while keeping payload safe
+    const articles = uniqueArticles.slice(0, 15).map(item => ({
       title: item.title,
       snippet: item.contentSnippet || item.content,
       link: item.link,
@@ -69,6 +67,8 @@ export async function POST(request: Request) {
       console.warn("No GEMINI_API_KEY found, returning error.");
       return NextResponse.json({ error: "Gemini API key is missing. Please configure it in your Vercel Dashboard." }, { status: 400 });
     }
+
+    const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
     // 2. Prepare prompt for Gemini
     const prompt = `
@@ -143,8 +143,11 @@ ${JSON.stringify(articles, null, 2)}
 
     return NextResponse.json({ projects, debug: text });
 
-  } catch (error) {
+  } catch (error: any) {
     console.error("AI Scan Error:", error);
-    return NextResponse.json({ error: "Failed to perform AI scan" }, { status: 500 });
+    return NextResponse.json({ 
+      error: "Failed to perform AI scan",
+      details: error.message || error.toString() 
+    }, { status: 500 });
   }
 }

@@ -1,3 +1,7 @@
 const { GoogleGenAI } = require('@google/genai');
-const ai = new GoogleGenAI({ apiKey: "DUMMY" });
-console.log(typeof ai.models.generateContent);
+try {
+  const ai = new GoogleGenAI({});
+  console.log("Initialized without error");
+} catch(e) {
+  console.log("Error initializing:", e);
+}
