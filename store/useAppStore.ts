@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { supabase } from '@/lib/supabase';
 
-export type ProjectStatus = 'pending' | 'community_verified' | 'expert_audited' | 'disputed';
+export type ProjectStatus = 'pending' | 'community_verified' | 'expert_audited' | 'disputed' | 'ai_staged';
 
 export interface ProjectLocation {
   country?: string;
@@ -77,6 +77,8 @@ interface AppState {
   addToQueue: (action: OfflineAction) => void;
   removeFromQueue: (id: string) => void;
   flushOfflineQueue: () => Promise<void>;
+  addStagedProjects: (projects: Project[]) => void;
+  publishStagedProject: (id: string) => Promise<void>;
 }
 
 export const useAppStore = create<AppState>()(
@@ -187,6 +189,45 @@ export const useAppStore = create<AppState>()(
         }
       },
       
+      addStagedProjects: (newProjects) => {
+        let uniqueNewProjects: Project[] = [];
+        set((state) => {
+          const existingNames = new Set(state.projects.map(p => p.project_name.toLowerCase()));
+          uniqueNewProjects = newProjects.filter(p => !existingNames.has(p.project_name.toLowerCase()));
+          return { projects: [...uniqueNewProjects, ...state.projects] };
+        });
+      },
+
+      publishStagedProject: async (id: string) => {
+        set((state) => {
+          const newProjects = state.projects.map(p => {
+            if (p.id === id) {
+              return { ...p, status: 'pending' as const };
+            }
+            return p;
+          });
+          return { projects: newProjects };
+        });
+
+        const publishedProj = get().projects.find(p => p.id === id);
+        if (publishedProj) {
+          if (typeof window !== 'undefined' && !window.navigator.onLine) {
+            get().addToQueue({
+              id: Math.random().toString(),
+              table: 'projects',
+              action: 'insert',
+              payload: publishedProj
+            });
+          } else {
+            try {
+              await supabase.from('projects').insert(publishedProj);
+            } catch (error) {
+              console.error("Error saving published project to Supabase:", error);
+            }
+          }
+        }
+      },
+
       voteProject: (id, type) => {
         set((state) => {
           const currentVote = state.deviceVotes[id];

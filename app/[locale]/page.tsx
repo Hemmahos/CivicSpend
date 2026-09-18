@@ -5,15 +5,14 @@ import { useAppStore } from '@/store/useAppStore';
 import ProjectCard from '@/components/ProjectCard';
 import LiveProjectMap from '@/components/LiveProjectMap';
 import AddProjectModal from '@/components/AddProjectModal';
-import AIDiscoveryAgent from '@/components/AIDiscoveryAgent';
-import { PlusCircle, Bot } from 'lucide-react';
+import { PlusCircle, Bot, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useTranslations } from 'next-intl';
 
 export default function Home() {
   const { projects, fetchProjects } = useAppStore();
   const [isAddModalOpen, setIsAddModalOpen] = React.useState(false);
-  const [isAiModalOpen, setIsAiModalOpen] = React.useState(false);
+  const [isScanning, setIsScanning] = React.useState(false);
   const [visibleCount, setVisibleCount] = React.useState(4);
   const tHero = useTranslations('Hero');
   const tHome = useTranslations('Home');
@@ -70,6 +69,49 @@ export default function Home() {
     runDailyScan();
   }, []);
 
+  const scanWithAIRadar = async () => {
+    setIsScanning(true);
+    try {
+      const res = await fetch('/api/ai-radar', { method: 'POST' });
+      if (res.ok) {
+        const data = await res.json();
+        if (Array.isArray(data) && data.length > 0) {
+          const stagedProjects = data.map((item: any) => ({
+            id: `ai_staged_${Math.random().toString(36).substring(2, 11)}`,
+            project_name: item.project_name || 'Unknown Project',
+            location: {
+              state_or_region: item.location || 'Unknown Location',
+              specific_address: '',
+              lat: 0,
+              lng: 0
+            },
+            financials: {
+              total_budget_claimed_local_currency: Number(item.claimed_budget_local) || 0,
+              expert_verified_value: null
+            },
+            deliverables: [],
+            status: 'ai_staged' as const,
+            sources: item.source_url ? [item.source_url] : [],
+            origin: 'ai_scan' as const,
+            upvotes: 0,
+            downvotes: 0,
+          }));
+          useAppStore.getState().addStagedProjects(stagedProjects);
+          toast.success(tHome('ai_toast', { count: stagedProjects.length }));
+        } else {
+          toast.info(tHome('no_projects_desc'));
+        }
+      } else {
+        toast.error("Failed to fetch live projects.");
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("Network error during AI Radar scan.");
+    } finally {
+      setIsScanning(false);
+    }
+  };
+
   return (
     <div className="w-full flex flex-col">
       {/* Hero Section */}
@@ -109,10 +151,12 @@ export default function Home() {
         </div>
         <div className="flex flex-wrap items-center gap-3">
           <button 
-            onClick={() => setIsAiModalOpen(true)}
-            className="flex items-center gap-2 bg-[#40AFD6]/10 hover:bg-[#40AFD6]/20 text-[#40AFD6] dark:bg-[#40AFD6]/10 dark:hover:bg-[#40AFD6]/20 dark:text-[#40AFD6] px-4 py-2 dark:px-5 dark:py-2 rounded-xl dark:rounded-full text-sm font-medium transition border border-[#40AFD6]/30 dark:border-[#40AFD6]/30"
+            onClick={scanWithAIRadar}
+            disabled={isScanning}
+            className="flex items-center gap-2 bg-[#40AFD6]/10 hover:bg-[#40AFD6]/20 text-[#40AFD6] dark:bg-[#40AFD6]/10 dark:hover:bg-[#40AFD6]/20 dark:text-[#40AFD6] px-4 py-2 dark:px-5 dark:py-2 rounded-xl dark:rounded-full text-sm font-medium transition border border-[#40AFD6]/30 dark:border-[#40AFD6]/30 disabled:opacity-50"
           >
-            <Bot size={18} /> <span>{tHome('ai_radar')}</span>
+            {isScanning ? <Loader2 size={18} className="animate-spin" /> : <Bot size={18} />} 
+            <span>{isScanning ? "Scanning Live News Sources..." : tHome('ai_radar')}</span>
           </button>
           <button 
             onClick={() => setIsAddModalOpen(true)}
@@ -134,10 +178,12 @@ export default function Home() {
           </p>
           <div className="flex flex-col sm:flex-row gap-4">
             <button 
-              onClick={() => setIsAiModalOpen(true)}
-              className="flex items-center justify-center gap-2 bg-[#40AFD6]/10 hover:bg-[#40AFD6]/20 text-[#40AFD6] dark:bg-[#40AFD6]/10 dark:hover:bg-[#40AFD6]/20 dark:text-[#40AFD6] px-6 py-3 rounded-full text-sm font-medium transition border border-[#40AFD6]/30 dark:border-[#40AFD6]/30"
+              onClick={scanWithAIRadar}
+              disabled={isScanning}
+              className="flex items-center justify-center gap-2 bg-[#40AFD6]/10 hover:bg-[#40AFD6]/20 text-[#40AFD6] dark:bg-[#40AFD6]/10 dark:hover:bg-[#40AFD6]/20 dark:text-[#40AFD6] px-6 py-3 rounded-full text-sm font-medium transition border border-[#40AFD6]/30 dark:border-[#40AFD6]/30 disabled:opacity-50"
             >
-              <Bot size={18} /> <span>{tHome('scan_ai')}</span>
+              {isScanning ? <Loader2 size={18} className="animate-spin" /> : <Bot size={18} />} 
+              <span>{isScanning ? "Scanning Live News Sources..." : tHome('scan_ai')}</span>
             </button>
             <button 
               onClick={() => setIsAddModalOpen(true)}
@@ -179,10 +225,6 @@ export default function Home() {
       <AddProjectModal 
         isOpen={isAddModalOpen}
         onClose={() => setIsAddModalOpen(false)}
-      />
-      <AIDiscoveryAgent 
-        isOpen={isAiModalOpen}
-        onClose={() => setIsAiModalOpen(false)}
       />
       </div>
     </div>
