@@ -57,7 +57,7 @@ export const mockDiscoveredProjects = [
 ];
 
 export default function AIDiscoveryAgent({ isOpen, onClose }: AIDiscoveryAgentProps) {
-  const { addProject } = useAppStore();
+  const { addProject, projects } = useAppStore();
   const [scanStatus, setScanStatus] = useState<'idle' | 'scanning' | 'parsing' | 'done'>('idle');
   const [selectedProjects, setSelectedProjects] = useState<string[]>(mockDiscoveredProjects.map(p => p.id));
   const [isPublishing, setIsPublishing] = useState(false);
@@ -76,9 +76,26 @@ export default function AIDiscoveryAgent({ isOpen, onClose }: AIDiscoveryAgentPr
   const startScan = async () => {
     setScanStatus('scanning');
     try {
-      // Fetch from our new AI API Endpoint
-      const res = await fetch('/api/ai-scan');
+      let country = 'Nigeria';
+      try {
+        const ipRes = await fetch('https://ipapi.co/json/');
+        const ipData = await ipRes.json();
+        if (ipData.country_name) {
+          country = ipData.country_name;
+        }
+      } catch (e) {
+        console.error("Failed to fetch location", e);
+      }
+
+      const existingProjects = projects.map(p => p.project_name);
+
       setScanStatus('parsing');
+      
+      const res = await fetch('/api/ai-scan', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ country, existingProjects })
+      });
       
       if (res.ok) {
         const data = await res.json();
