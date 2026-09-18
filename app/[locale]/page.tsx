@@ -92,6 +92,7 @@ export default function Home() {
             deliverables: [],
             status: 'ai_staged' as const,
             sources: item.source_url ? [item.source_url] : [],
+            evidences: [],
             origin: 'ai_scan' as const,
             upvotes: 0,
             downvotes: 0,
