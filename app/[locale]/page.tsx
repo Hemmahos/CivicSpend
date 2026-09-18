@@ -8,12 +8,14 @@ import AddProjectModal from '@/components/AddProjectModal';
 import AIDiscoveryAgent from '@/components/AIDiscoveryAgent';
 import { PlusCircle, Bot } from 'lucide-react';
 import { toast } from 'sonner';
+import { useTranslations } from 'next-intl';
 
 export default function Home() {
   const { projects, fetchProjects } = useAppStore();
   const [isAddModalOpen, setIsAddModalOpen] = React.useState(false);
   const [isAiModalOpen, setIsAiModalOpen] = React.useState(false);
   const [visibleCount, setVisibleCount] = React.useState(4);
+  const t = useTranslations('Hero');
 
   React.useEffect(() => {
     // Load data from Supabase
@@ -84,13 +86,10 @@ export default function Home() {
 
         <div className="relative z-10 px-4 max-w-4xl mx-auto -mt-16">
           <h1 className="text-4xl md:text-5xl lg:text-7xl font-extrabold tracking-tight text-white leading-[1.15] drop-shadow-2xl [text-shadow:_0_4px_20px_rgba(0,0,0,0.6)]">
-            Know what project is ongoing<br className="hidden md:block" />
-            <span className="bg-[#40AFD6] text-white px-4 py-1 mt-2 inline-block rounded-xl md:mt-3 shadow-xl transform -rotate-1 [text-shadow:none]">
-              in your neighbourhood.
-            </span>
+            {t('title')}
           </h1>
           <p className="mt-8 text-lg md:text-xl text-white max-w-2xl mx-auto font-semibold drop-shadow-xl [text-shadow:_0_2px_10px_rgba(0,0,0,0.8)]">
-            Verified infrastructure data from citizens and professionals across every state, local government, and ward. Curated daily.
+            {t('subtitle')}
           </p>
         </div>
       </div>

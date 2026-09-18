@@ -1,0 +1,21 @@
+{
+  "Header": {
+    "logo": "CivicSpend",
+    "how_it_works": "How it Works",
+    "expert_audit": "Expert Audit",
+    "wallet_connected": "Wallet Connected",
+    "connect_wallet": "Connect Wallet"
+  },
+  "Hero": {
+    "title": "Transparent Civic Spending",
+    "subtitle": "Community-driven accountability platform for tracking and verifying civic projects. Ensure public funds build public value.",
+    "scan_projects": "Scan Projects",
+    "report_project": "Report Project",
+    "verified": "Verified",
+    "audited": "Audited",
+    "disputed": "Disputed"
+  },
+  "LanguageSwitcher": {
+    "switch_language": "Change Language"
+  }
+}

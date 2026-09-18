@@ -1,0 +1,21 @@
+{
+  "Header": {
+    "logo": "CivicSpend",
+    "how_it_works": "Jinsi Inavyofanya Kazi",
+    "expert_audit": "Ukaguzi wa Wataalamu",
+    "wallet_connected": "Mkoba Umeunganishwa",
+    "connect_wallet": "Unganisha Mkoba"
+  },
+  "Hero": {
+    "title": "Matumizi ya Umma kwa Uwazi",
+    "subtitle": "Jukwaa la uwajibikaji linaloendeshwa na jamii kwa ajili ya kufuatilia na kuthibitisha miradi ya kiraia. Hakikisha fedha za umma zinajenga thamani kwa umma.",
+    "scan_projects": "Chunguza Miradi",
+    "report_project": "Ripoti Mradi",
+    "verified": "Imethibitishwa",
+    "audited": "Imekaguliwa",
+    "disputed": "Inabishaniwa"
+  },
+  "LanguageSwitcher": {
+    "switch_language": "Badilisha Lugha"
+  }
+}

@@ -8,12 +8,15 @@ import { useAppStore } from '@/store/useAppStore';
 import { useTheme } from 'next-themes';
 import Footer from './Footer';
 import Logo from './Logo';
+import LanguageSwitcher from './LanguageSwitcher';
+import { useTranslations } from 'next-intl';
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const { expertAuth } = useAppStore();
   const { resolvedTheme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
+  const t = useTranslations('Header');
 
   useEffect(() => {
     setMounted(true);
@@ -23,6 +26,18 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     { name: 'Feed', path: '/' },
     { name: 'Audit', path: '/audit' },
   ];
+
+  // We check path without locale, or use logic depending on implementation
+  const stripLocale = (path: string) => {
+    const parts = path.split('/');
+    if (parts.length > 1 && ['en', 'fr', 'pt', 'ar', 'sw', 'ha'].includes(parts[1])) {
+      parts.splice(1, 1);
+      return parts.join('/') || '/';
+    }
+    return path;
+  };
+
+  const currentPath = stripLocale(pathname);
 
   return (
     <div className="flex flex-col min-h-screen bg-background text-foreground font-sans">
@@ -35,7 +50,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             <Link href="/" className="flex items-center gap-2">
               <Logo size={28} />
               <span className="font-bold text-xl tracking-tight text-foreground hidden sm:inline-block">
-                CivicSpend
+                {t('logo')}
               </span>
             </Link>
           </div>
@@ -43,7 +58,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           {/* Navigation - Center */}
           <nav className="flex items-center gap-6 mx-auto absolute left-1/2 -translate-x-1/2">
             {navItems.map((item) => {
-              const isActive = pathname === item.path || (item.path === '/' && pathname.startsWith('/project/'));
+              const isActive = currentPath === item.path || (item.path === '/' && currentPath.startsWith('/project/'));
               return (
                 <Link
                   key={item.name}
@@ -62,6 +77,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
           {/* Actions - Right */}
           <div className="flex items-center gap-3">
+            <LanguageSwitcher />
             <button
               onClick={() => setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')}
               className="p-2 rounded-full text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"

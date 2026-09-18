@@ -1,0 +1,21 @@
+{
+  "Header": {
+    "logo": "CivicSpend",
+    "how_it_works": "Comment ça marche",
+    "expert_audit": "Audit d'expert",
+    "wallet_connected": "Portefeuille connecté",
+    "connect_wallet": "Connecter le portefeuille"
+  },
+  "Hero": {
+    "title": "Dépenses Civiques Transparentes",
+    "subtitle": "Plateforme de responsabilité communautaire pour le suivi et la vérification des projets civiques. Assurez-vous que les fonds publics créent de la valeur publique.",
+    "scan_projects": "Scanner les projets",
+    "report_project": "Signaler un projet",
+    "verified": "Vérifié",
+    "audited": "Audité",
+    "disputed": "Contesté"
+  },
+  "LanguageSwitcher": {
+    "switch_language": "Changer de langue"
+  }
+}

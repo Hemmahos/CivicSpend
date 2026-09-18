@@ -1,0 +1,21 @@
+{
+  "Header": {
+    "logo": "CivicSpend",
+    "how_it_works": "Como Funciona",
+    "expert_audit": "Auditoria de Especialistas",
+    "wallet_connected": "Carteira Conectada",
+    "connect_wallet": "Conectar Carteira"
+  },
+  "Hero": {
+    "title": "Gastos Cívicos Transparentes",
+    "subtitle": "Plataforma de responsabilidade impulsionada pela comunidade para rastrear e verificar projetos cívicos. Garanta que fundos públicos gerem valor público.",
+    "scan_projects": "Verificar Projetos",
+    "report_project": "Denunciar Projeto",
+    "verified": "Verificado",
+    "audited": "Auditado",
+    "disputed": "Contestado"
+  },
+  "LanguageSwitcher": {
+    "switch_language": "Alterar idioma"
+  }
+}

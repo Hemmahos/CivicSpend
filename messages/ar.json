@@ -1,0 +1,21 @@
+{
+  "Header": {
+    "logo": "سيفيك سبيند (CivicSpend)",
+    "how_it_works": "كيف يعمل",
+    "expert_audit": "تدقيق الخبراء",
+    "wallet_connected": "المحفظة متصلة",
+    "connect_wallet": "ربط المحفظة"
+  },
+  "Hero": {
+    "title": "إنفاق مدني شفاف",
+    "subtitle": "منصة مساءلة مجتمعية لتتبع والتحقق من المشاريع المدنية. ضمان أن تبني الأموال العامة قيمة عامة.",
+    "scan_projects": "مسح المشاريع",
+    "report_project": "الإبلاغ عن مشروع",
+    "verified": "تم التحقق",
+    "audited": "مدقق",
+    "disputed": "متنازع عليه"
+  },
+  "LanguageSwitcher": {
+    "switch_language": "تغيير اللغة"
+  }
+}

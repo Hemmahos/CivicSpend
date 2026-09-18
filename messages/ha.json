@@ -1,0 +1,21 @@
+{
+  "Header": {
+    "logo": "CivicSpend",
+    "how_it_works": "Yadda Yake Aiki",
+    "expert_audit": "Binciken Masana",
+    "wallet_connected": "An Haɗa Walat",
+    "connect_wallet": "Haɗa Walat"
+  },
+  "Hero": {
+    "title": "Kashe Kuɗin Al'umma a Bayyane",
+    "subtitle": "Dandamalin tabbatar da gaskiya da riƙon amana don bin diddigi da tantance ayyukan al'umma. Tabbatar da kuɗaɗen jama'a suna gina darajar jama'a.",
+    "scan_projects": "Duba Ayyuka",
+    "report_project": "Bayar da Rahoton Aiki",
+    "verified": "An Tabbatar",
+    "audited": "An Bincika",
+    "disputed": "An Yi Jayayya"
+  },
+  "LanguageSwitcher": {
+    "switch_language": "Canza Harshe"
+  }
+}
