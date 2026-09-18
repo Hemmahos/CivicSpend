@@ -103,7 +103,8 @@ export default function Home() {
           toast.info(tHome('no_projects_desc'));
         }
       } else {
-        toast.error("Failed to fetch live projects.");
+        const errData = await res.json().catch(() => null);
+        toast.error(errData?.error || "Failed to fetch live projects.");
       }
     } catch (error) {
       console.error(error);

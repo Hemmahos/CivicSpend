@@ -4,6 +4,7 @@ import "../globals.css";
 import Layout from "@/components/Layout";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import OfflineSyncManager from "@/components/OfflineSyncManager";
+import { Toaster } from "@/components/ui/sonner";
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
 
@@ -47,6 +48,7 @@ export default async function RootLayout({
             <Layout>
               {children}
             </Layout>
+            <Toaster />
             <OfflineSyncManager />
           </ThemeProvider>
         </NextIntlClientProvider>
