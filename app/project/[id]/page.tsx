@@ -7,6 +7,7 @@ import DiscrepancyBar from '@/components/DiscrepancyBar';
 import { ArrowLeft, MapPin, CheckCircle, AlertTriangle, FileText, Link as LinkIcon, Bot, Users, Building, Camera, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Dialog, DialogContent } from '@/components/ui/dialog';
 import EvidenceUploadModal from '@/components/EvidenceUploadModal';
 
 export default function ProjectDetailsPage() {
@@ -14,6 +15,7 @@ export default function ProjectDetailsPage() {
   const router = useRouter();
   const { projects } = useAppStore();
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
   
   const id = Array.isArray(params.id) ? params.id[0] : params.id;
   const project = projects.find((p) => p.id === id);
@@ -75,7 +77,6 @@ export default function ProjectDetailsPage() {
         </div>
 
         {/* Media Evidence */}
-        {/* Media Evidence */}
         {project.evidences && project.evidences.length > 0 ? (
           <div className="mt-6 border-t border-border pt-6 px-8 pb-8">
             <div className="flex items-center justify-between mb-6">
@@ -93,10 +94,13 @@ export default function ProjectDetailsPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {project.evidences.map((evidence) => (
                 <div key={evidence.id} className="bg-muted/30 rounded-2xl border border-border p-3">
-                  <div className="w-full h-48 relative rounded-xl overflow-hidden">
+                  <div 
+                    className="w-full h-48 relative rounded-xl overflow-hidden cursor-pointer hover:opacity-90 transition-opacity"
+                    onClick={() => setSelectedImage(evidence.mediaUrl)}
+                  >
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img src={evidence.mediaUrl} alt="Evidence" className="w-full h-full object-cover" />
-                    <div className="absolute bottom-2 right-2 bg-black/60 backdrop-blur-sm text-white px-2 py-1 rounded-md text-[10px] font-mono flex flex-col items-end gap-0.5">
+                    <div className="absolute bottom-2 right-2 bg-black/60 backdrop-blur-sm text-white px-2 py-1 rounded-md text-[10px] font-mono flex flex-col items-end gap-0.5 pointer-events-none">
                       <span>LAT: {project.location.lat.toFixed(5)}</span>
                       <span>LNG: {project.location.lng.toFixed(5)}</span>
                       <span className="text-green-400 flex items-center gap-1"><CheckCircle size={10} /> EXIF Verified</span>
@@ -138,6 +142,16 @@ export default function ProjectDetailsPage() {
         isOpen={isUploadModalOpen} 
         onClose={() => setIsUploadModalOpen(false)} 
       />
+
+      {/* Fullscreen Image Modal */}
+      <Dialog open={!!selectedImage} onOpenChange={(open) => !open && setSelectedImage(null)}>
+        <DialogContent className="max-w-4xl bg-transparent border-none shadow-none p-0 flex justify-center items-center">
+          {selectedImage && (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={selectedImage} alt="Evidence Fullscreen" className="max-w-full max-h-[85vh] object-contain rounded-xl shadow-2xl" />
+          )}
+        </DialogContent>
+      </Dialog>
 
       {/* AI Parsed Budget Data (Discrepancy Bar) */}
       <div className="bg-card rounded-3xl shadow-sm border border-border p-8 mb-6">
