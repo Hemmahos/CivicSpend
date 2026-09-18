@@ -120,17 +120,28 @@ ${JSON.stringify(articles, null, 2)}
       }
     });
 
-    const text = response.text || '';
+    let text = response.text || '';
+    
+    // Remove markdown code blocks if Gemini returns them
+    text = text.replace(/^```(json)?\s*/i, '').replace(/\s*```$/i, '').trim();
+
     let projects = [];
     if (text) {
       try {
-        projects = JSON.parse(text);
+        let parsed = JSON.parse(text);
+        if (parsed && !Array.isArray(parsed) && Array.isArray(parsed.projects)) {
+          projects = parsed.projects;
+        } else if (Array.isArray(parsed)) {
+          projects = parsed;
+        } else {
+          console.warn("Parsed response is not an array:", parsed);
+        }
       } catch (e) {
         console.error("Failed to parse Gemini response:", text);
       }
     }
 
-    return NextResponse.json({ projects });
+    return NextResponse.json({ projects, debug: text });
 
   } catch (error) {
     console.error("AI Scan Error:", error);
