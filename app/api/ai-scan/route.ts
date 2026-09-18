@@ -27,9 +27,9 @@ export async function POST(request: Request) {
     // 1. Fetch RSS feeds for multiple comprehensive queries to cast a wider net
     const safeCountry = encodeURIComponent(country.toLowerCase());
     const queries = [
-      `infrastructure+OR+construction+project+${safeCountry}+when:30d`,
-      `road+OR+bridge+OR+railway+contract+${safeCountry}+when:30d`,
-      `hospital+OR+school+OR+power+facility+${safeCountry}+when:30d`
+      `community+OR+NGO+OR+government+project+${safeCountry}+when:30d`,
+      `infrastructure+OR+development+OR+initiative+${safeCountry}+when:30d`,
+      `funding+OR+grant+OR+contract+awarded+${safeCountry}+when:30d`
     ];
 
     let allItems: any[] = [];
@@ -72,8 +72,8 @@ export async function POST(request: Request) {
 
     // 2. Prepare prompt for Gemini
     const prompt = `
-You are an expert data extractor. I have a list of news articles about government infrastructure projects in Nigeria.
-Extract any distinct public infrastructure construction projects mentioned in these articles.
+You are an expert data extractor. I have a list of news articles about government, NGO, and community development projects in ${country}.
+Extract any distinct projects mentioned in these articles (such as infrastructure, health, education, tech, or social initiatives).
 
 CRITICAL DEDUPLICATION INSTRUCTIONS:
 1. DO NOT include any project that is semantically identical or refers to the same underlying project as these existing projects currently in our database:
