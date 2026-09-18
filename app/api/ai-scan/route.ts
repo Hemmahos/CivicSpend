@@ -112,13 +112,26 @@ ${JSON.stringify(articles, null, 2)}
 `;
 
     // 3. Call Gemini API
-    const response = await ai.models.generateContent({
-      model: 'gemini-1.5-flash',
-      contents: prompt,
-      config: {
-        responseMimeType: 'application/json',
+    let response;
+    try {
+      response = await ai.models.generateContent({
+        model: 'gemini-1.5-flash-latest',
+        contents: prompt,
+        config: {
+          responseMimeType: 'application/json',
+        }
+      });
+    } catch (apiError: any) {
+      if (apiError.message && (apiError.message.includes('not found') || apiError.message.includes('not supported'))) {
+        console.warn("Model not found, falling back to gemini-pro...");
+        response = await ai.models.generateContent({
+          model: 'gemini-pro',
+          contents: prompt
+        });
+      } else {
+        throw apiError;
       }
-    });
+    }
 
     let text = response.text || '';
     
