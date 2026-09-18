@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Layout from "@/components/Layout";
 import { ThemeProvider } from "@/components/ThemeProvider";
+import OfflineSyncManager from "@/components/OfflineSyncManager";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -15,8 +16,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "CivicSpend | Decentralized Public Infrastructure Tracker",
-  description: "Track and verify public spending with community consensus and expert oracle audits.",
+  title: "CivicSpend - Open Government Auditing",
+  description: "Community-driven accountability platform for tracking and verifying civic projects.",
+  manifest: "/manifest.json",
 };
 
 export default function RootLayout({
@@ -33,6 +35,7 @@ export default function RootLayout({
           <Layout>
             {children}
           </Layout>
+          <OfflineSyncManager />
         </ThemeProvider>
       </body>
     </html>

@@ -101,17 +101,24 @@ export default function EvidenceUploadModal({ project, isOpen, onClose }: Eviden
       const video = videoRef.current;
       const canvas = canvasRef.current;
       
-      const size = Math.min(video.videoWidth, video.videoHeight) || 640;
-      canvas.width = size;
-      canvas.height = size;
+      // Calculate crop dimensions for 1:1 aspect ratio
+      const videoSize = Math.min(video.videoWidth, video.videoHeight) || 640;
+      
+      // Maximum dimension for the saved image to save bandwidth (max 800px)
+      const MAX_DIMENSION = 800;
+      const targetSize = Math.min(videoSize, MAX_DIMENSION);
+      
+      canvas.width = targetSize;
+      canvas.height = targetSize;
       
       const ctx = canvas.getContext('2d');
       if (ctx) {
         const sx = video.videoWidth > video.videoHeight ? (video.videoWidth - video.videoHeight) / 2 : 0;
         const sy = video.videoHeight > video.videoWidth ? (video.videoHeight - video.videoWidth) / 2 : 0;
         
-        ctx.drawImage(video, sx, sy, size, size, 0, 0, size, size);
-        const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
+        ctx.drawImage(video, sx, sy, videoSize, videoSize, 0, 0, targetSize, targetSize);
+        // Heavily compress to 0.6 quality for low bandwidth mode
+        const dataUrl = canvas.toDataURL('image/jpeg', 0.6);
         setCapturedImage(dataUrl);
         stopCamera();
       }
