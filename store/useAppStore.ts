@@ -157,7 +157,13 @@ export const useAppStore = create<AppState>()(
           if (error) throw error;
           if (data) {
             const validProjects = (data as Project[]).filter(p => !p.id.startsWith('ai_mock_') && p.project_name !== 'HIDDEN');
-            set({ projects: validProjects });
+            
+            set((state) => {
+              // Preserve ai_staged projects that haven't been published yet
+              const stagedProjects = state.projects.filter(p => p.status === 'ai_staged');
+              
+              return { projects: [...stagedProjects, ...validProjects] };
+            });
           }
         } catch (error) {
           console.error("Error fetching projects from Supabase:", error);
@@ -175,9 +181,11 @@ export const useAppStore = create<AppState>()(
           });
         } else {
           try {
-            await supabase.from('projects').insert(project);
+            const { error } = await supabase.from('projects').insert(project);
+            if (error) throw error;
           } catch (error) {
             console.error("Error saving to Supabase:", error);
+            // Optionally, we could toast the error here if toast was imported
           }
         }
       },
@@ -201,7 +209,8 @@ export const useAppStore = create<AppState>()(
             });
           } else {
             try {
-              await supabase.from('projects').insert(uniqueNewProjects);
+              const { error } = await supabase.from('projects').insert(uniqueNewProjects);
+              if (error) throw error;
             } catch (error) {
               console.error("Error saving multiple projects to Supabase:", error);
             }
@@ -240,7 +249,8 @@ export const useAppStore = create<AppState>()(
             });
           } else {
             try {
-              await supabase.from('projects').insert(publishedProj);
+              const { error } = await supabase.from('projects').insert(publishedProj);
+              if (error) throw error;
             } catch (error) {
               console.error("Error saving published project to Supabase:", error);
             }
