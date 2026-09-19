@@ -8,6 +8,14 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 export default function ProjectCard({ project }: { project: Project }) {
   const { voteProject, deviceVotes, publishStagedProject } = useAppStore();
@@ -122,15 +130,47 @@ export default function ProjectCard({ project }: { project: Project }) {
                     <ThumbsDown size={18} className={userVote === 'down' ? 'fill-destructive text-destructive' : ''} /> <span className="font-medium text-sm">{project.downvotes}</span>
                   </button>
 
-                  {/* Petition stats */}
-                  <div className="flex items-center gap-3 pl-2 border-l border-border/50">
-                    <div className="flex items-center gap-1 text-green-600 dark:text-green-500" title="Signatures In Favour">
-                       <CheckCircle size={14} /> <span className="font-medium text-sm">{project.petitionFor || 0}</span>
-                    </div>
-                    <div className="flex items-center gap-1 text-red-600 dark:text-red-500" title="Signatures Against">
-                       <AlertTriangle size={14} /> <span className="font-medium text-sm">{project.petitionAgainst || 0}</span>
-                    </div>
-                  </div>
+                  {/* Petition stats / Sign button */}
+                  <Dialog>
+                    <DialogTrigger className="flex items-center gap-3 pl-2 border-l border-border/50 hover:bg-muted/50 p-1.5 rounded-lg transition-colors cursor-pointer">
+                      <div className="flex items-center gap-1 text-green-600 dark:text-green-500" title="Signatures In Favour">
+                        <CheckCircle size={14} /> <span className="font-medium text-sm">{project.petitionFor || 0}</span>
+                      </div>
+                      <div className="flex items-center gap-1 text-red-600 dark:text-red-500" title="Signatures Against">
+                        <AlertTriangle size={14} /> <span className="font-medium text-sm">{project.petitionAgainst || 0}</span>
+                      </div>
+                    </DialogTrigger>
+                    <DialogContent className="sm:max-w-md bg-background">
+                      <DialogHeader>
+                        <DialogTitle>Sign Petition</DialogTitle>
+                        <DialogDescription>
+                          Select your stance on <strong>{project.project_name}</strong>. You can only sign once per device.
+                        </DialogDescription>
+                      </DialogHeader>
+                      <div className="flex flex-col gap-4 py-4">
+                        <Button 
+                          onClick={() => {
+                            useAppStore.getState().signPetition(project.id, 'for');
+                          }}
+                          disabled={!!useAppStore.getState().devicePetitions[project.id]}
+                          className={`w-full h-12 text-lg flex items-center justify-center gap-2 ${useAppStore.getState().devicePetitions[project.id] === 'for' ? 'bg-green-700 hover:bg-green-700' : 'bg-green-600 hover:bg-green-700'} text-white`}
+                        >
+                          <ThumbsUp size={20} /> 
+                          {useAppStore.getState().devicePetitions[project.id] === 'for' ? 'Signed In Favour' : 'Sign In Favour'}
+                        </Button>
+                        <Button 
+                          onClick={() => {
+                            useAppStore.getState().signPetition(project.id, 'against');
+                          }}
+                          disabled={!!useAppStore.getState().devicePetitions[project.id]}
+                          className={`w-full h-12 text-lg flex items-center justify-center gap-2 ${useAppStore.getState().devicePetitions[project.id] === 'against' ? 'bg-red-700 hover:bg-red-700' : 'bg-red-600 hover:bg-red-700'} text-white`}
+                        >
+                          <ThumbsDown size={20} /> 
+                          {useAppStore.getState().devicePetitions[project.id] === 'against' ? 'Signed Against' : 'Sign Against'}
+                        </Button>
+                      </div>
+                    </DialogContent>
+                  </Dialog>
                 </div>
                 
                 <Link href={`/project/${project.id}`}>

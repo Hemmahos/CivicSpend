@@ -61,7 +61,7 @@ export async function POST(request: Request) {
 
     // Use native fetch to Gemini API to bypass SDK issues in edge/vercel environments
     const prompt = `
-You are an expert civic technology data extractor. Analyze the provided news articles, government press releases, or search results. Identify any public infrastructure projects (e.g., roads, hospitals, railways) mentioned. 
+You are an expert civic technology data extractor. Analyze the provided news articles, government press releases, or search results. Identify ALL public infrastructure projects (e.g., roads, hospitals, railways, bridges, schools, power grids, water works) mentioned across the texts. Be exhaustive and extract every single distinct project you can find, no matter how small.
 
 Extract the data and return a STRICT JSON array of objects. Do not include markdown formatting like \`\`\`json. If no projects are found, return an empty array [].
 
