@@ -87,7 +87,7 @@ export default function AddProjectModal({ isOpen, onClose }: AddProjectModalProp
       const [y, m] = values.startPeriod.split('-');
       if (y && m) { startYear = y; startMonth = m; }
     }
-    if (!isOngoing && values.endPeriod) {
+    if (values.endPeriod) {
       const [y, m] = values.endPeriod.split('-');
       if (y && m) { endYear = y; endMonth = m; }
     }
@@ -226,7 +226,6 @@ export default function AddProjectModal({ isOpen, onClose }: AddProjectModalProp
                 id="endPeriod" 
                 name="endPeriod" 
                 type="month" 
-                disabled={isOngoing}
               />
             </div>
           </div>
