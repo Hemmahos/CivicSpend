@@ -20,7 +20,9 @@ export async function POST(request: Request) {
     const queries = [
       `${safeCountry} public infrastructure budget when:30d`,
       `road construction contract awarded ${safeCountry} when:30d`,
-      `new government project funding ${safeCountry} when:30d`
+      `new government project funding ${safeCountry} when:30d`,
+      `state government infrastructure projects ${safeCountry} when:30d`,
+      `hospital school construction ${safeCountry} when:30d`
     ];
 
     let allItems: any[] = [];
@@ -41,7 +43,7 @@ export async function POST(request: Request) {
     }
     const uniqueArticles = Array.from(uniqueArticlesMap.values());
     
-    const articles = uniqueArticles.slice(0, 15).map(item => ({
+    const articles = uniqueArticles.slice(0, 40).map(item => ({
       title: item.title,
       snippet: item.contentSnippet || item.content,
       link: item.link
@@ -59,13 +61,16 @@ export async function POST(request: Request) {
 
     // Use native fetch to Gemini API to bypass SDK issues in edge/vercel environments
     const prompt = `
-You are an expert civic technology data extractor. Analyze the following news excerpts. Identify any newly announced public infrastructure projects (e.g., roads, hospitals, schools). You must return a JSON array of objects. If no projects are found, return an empty array [].
+You are an expert civic technology data extractor. Analyze the following news excerpts. 
+Identify ALL newly announced or ongoing public infrastructure projects (e.g., roads, hospitals, schools, bridges, power plants) across the entire country.
+Extract AS MANY legitimate projects as you can find in the provided text.
+You must return a JSON array of objects. If no projects are found, return an empty array [].
 Do not include markdown formatting like \`\`\`json.
 
 Use this EXACT JSON schema for each object in the array:
 {
   "project_name": "Name of the project",
-  "location": "State or City mentioned",
+  "location": "State, City, or Region mentioned",
   "claimed_budget_local": "Extract the numerical budget. If none, return 0",
   "currency": "e.g., NGN or USD",
   "source_url": "The URL of the article provided in the text"
@@ -137,6 +142,27 @@ function generateFallbackProjects(country: string) {
       "claimed_budget_local": 1200000000,
       "currency": "NGN",
       "source_url": "https://simulated-news.local/expressway-expansion"
+    },
+    {
+      "project_name": `Rural Electrification Project ${randomSuffix}`,
+      "location": `Northern District, ${country}`,
+      "claimed_budget_local": 350000000,
+      "currency": "NGN",
+      "source_url": "https://simulated-news.local/rural-electrification"
+    },
+    {
+      "project_name": `Federal University Library Construction ${randomSuffix}`,
+      "location": `University Town, ${country}`,
+      "claimed_budget_local": 210000000,
+      "currency": "NGN",
+      "source_url": "https://simulated-news.local/library-construction"
+    },
+    {
+      "project_name": `State Water Grid Overhaul ${randomSuffix}`,
+      "location": `Coastal Region, ${country}`,
+      "claimed_budget_local": 890000000,
+      "currency": "NGN",
+      "source_url": "https://simulated-news.local/water-grid-overhaul"
     }
   ];
 }
