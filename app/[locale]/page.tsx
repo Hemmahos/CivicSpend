@@ -93,20 +93,34 @@ export default function Home() {
         if (Array.isArray(data) && data.length > 0) {
           const stagedProjects = data.map((item: any) => ({
             id: `ai_staged_${Math.random().toString(36).substring(2, 11)}`,
-            project_name: item.project_name || 'Unknown Project',
+            project_name: item.projectName || 'Unknown Project',
             location: {
-              state_or_region: item.location || 'Unknown Location',
-              specific_address: '',
+              country: item.country || '',
+              state_or_region: item.stateOrRegion || 'Unknown Location',
+              specific_address: item.specificAddressLandmark || '',
               lat: 0,
               lng: 0
             },
+            timeline: {
+              startYear: item.startPeriod ? item.startPeriod.split('-')[0] : '',
+              startMonth: item.startPeriod ? item.startPeriod.split('-')[1] : '',
+              endYear: item.endPeriod ? item.endPeriod.split('-')[0] : '',
+              endMonth: item.endPeriod ? item.endPeriod.split('-')[1] : '',
+              isOngoing: item.isOngoing || false,
+            },
             financials: {
-              total_budget_claimed_local_currency: Number(item.claimed_budget_local) || 0,
+              total_budget_claimed_local_currency: Number(item.budgetLocalCurrency) || 0,
               expert_verified_value: null
             },
+            ministry: item.supervisingMinistry || '',
+            completion_progress: Number(item.completionProgress) || 0,
+            description: item.projectDescription || '',
+            key_objectives: item.keyObjectives ? item.keyObjectives.split(',').map((o: string) => o.trim()) : [],
+            beneficiaries: item.targetBeneficiaries || '',
+            expected_impact: item.expectedImpact || '',
             deliverables: [],
             status: 'ai_staged' as const,
-            sources: item.source_url ? [item.source_url] : [],
+            sources: item.sourceUrls ? item.sourceUrls.split(',').map((u: string) => u.trim()) : [],
             evidences: [],
             origin: 'ai_scan' as const,
             upvotes: 0,

@@ -61,25 +61,28 @@ export async function POST(request: Request) {
 
     // Use native fetch to Gemini API to bypass SDK issues in edge/vercel environments
     const prompt = `
-You are an expert civic technology data extractor. Analyze the following news excerpts. 
-Identify ALL newly announced or ongoing public infrastructure projects (e.g., roads, hospitals, schools, bridges, power plants) across the entire country.
-Extract AS MANY legitimate projects as you can find in the provided text.
-You must return a JSON array of objects. If no projects are found, return an empty array [].
-Do not include markdown formatting like \`\`\`json.
+You are an expert civic technology data extractor. Analyze the provided news articles, government press releases, or search results. Identify any public infrastructure projects (e.g., roads, hospitals, railways) mentioned. 
 
-Use this EXACT JSON schema for each object in the array:
+Extract the data and return a STRICT JSON array of objects. Do not include markdown formatting like \`\`\`json. If no projects are found, return an empty array [].
+
+For each project found, use this EXACT JSON schema. If a specific piece of information is missing from the text, use a logical default (e.g., 0 for budget, false for isOngoing, or "Not Specified").
+
 {
-  "project_name": "Name of the project",
-  "location": "State, City, or Region mentioned",
-  "claimed_budget_local": "Extract the numerical budget. If none, return 0",
-  "currency": "e.g., NGN or USD",
-  "source_url": "The URL of the article provided in the text",
-  "ministry": "The Ministry, Agency, or Department in charge",
-  "completion_progress": "Estimate completion percentage from 0 to 100 based on text. Newly announced is 0.",
-  "description": "A 1-2 sentence description of the project.",
-  "key_objectives": ["Objective 1", "Objective 2"],
-  "beneficiaries": "Who will benefit from this? e.g., Local residents, commuters",
-  "expected_impact": "What is the expected outcome of the project?"
+  "projectName": "The official name of the project (e.g., Obasanjo Road Rehabilitation)",
+  "country": "The country where the project is located",
+  "stateOrRegion": "The specific state or region",
+  "specificAddressLandmark": "A localized address, landmark, or start/end point",
+  "budgetLocalCurrency": "Extract the numerical budget only (e.g., 500000000). Remove currency symbols and commas.",
+  "startPeriod": "The start date in YYYY-MM format",
+  "endPeriod": "The expected completion date in YYYY-MM format",
+  "isOngoing": "Boolean: true if currently active/under construction, false if completed or abandoned",
+  "supervisingMinistry": "The government ministry or agency in charge",
+  "completionProgress": "Estimated percentage complete as a number from 0 to 100",
+  "projectDescription": "A 2-3 sentence detailed description of the project scope",
+  "keyObjectives": "A comma-separated string of the main goals (e.g., Reduce traffic, Improve safety)",
+  "targetBeneficiaries": "Who benefits from this? (e.g., Local residents, Commuters)",
+  "expectedImpact": "The expected outcome (e.g., 50% travel time reduction)",
+  "sourceUrls": "A comma-separated string of the URLs where this information was found"
 }
 
 Articles:
@@ -120,8 +123,8 @@ ${JSON.stringify(articles, null, 2)}
       // Ensure proper typings for numerical fields to prevent hydration errors
       projects = projects.map((p: any) => ({
         ...p,
-        claimed_budget_local: parseFloat(p.claimed_budget_local) || 0,
-        completion_progress: parseInt(p.completion_progress) || 0
+        budgetLocalCurrency: parseFloat(p.budgetLocalCurrency) || 0,
+        completionProgress: parseInt(p.completionProgress) || 0
       }));
 
       return NextResponse.json(projects);
@@ -143,69 +146,89 @@ function generateFallbackProjects(country: string) {
   const randomSuffix = Math.floor(Math.random() * 1000);
   return [
     {
-      "project_name": `National General Hospital Renovation Phase ${randomSuffix}`,
-      "location": `Capital Region, ${country}`,
-      "claimed_budget_local": 450000000,
-      "currency": "NGN",
-      "source_url": "https://simulated-news.local/hospital-renovation",
-      "ministry": "Ministry of Health",
-      "completion_progress": 15,
-      "description": "Comprehensive upgrade of the primary healthcare facility including new wards and equipment.",
-      "key_objectives": ["Improve healthcare access", "Upgrade medical equipment", "Increase bed capacity"],
-      "beneficiaries": "Citizens in the Capital Region",
-      "expected_impact": "Reduced mortality rate and better patient care"
+      "projectName": `National General Hospital Renovation Phase ${randomSuffix}`,
+      "country": country,
+      "stateOrRegion": "Capital Region",
+      "specificAddressLandmark": "Central District",
+      "budgetLocalCurrency": 450000000,
+      "startPeriod": "2023-01",
+      "endPeriod": "2025-12",
+      "isOngoing": true,
+      "supervisingMinistry": "Ministry of Health",
+      "completionProgress": 15,
+      "projectDescription": "Comprehensive upgrade of the primary healthcare facility including new wards and equipment.",
+      "keyObjectives": "Improve healthcare access, Upgrade medical equipment, Increase bed capacity",
+      "targetBeneficiaries": "Citizens in the Capital Region",
+      "expectedImpact": "Reduced mortality rate and better patient care",
+      "sourceUrls": "https://simulated-news.local/hospital-renovation"
     },
     {
-      "project_name": `Expressway Expansion Sector ${randomSuffix}`,
-      "location": `Commercial District, ${country}`,
-      "claimed_budget_local": 1200000000,
-      "currency": "NGN",
-      "source_url": "https://simulated-news.local/expressway-expansion",
-      "ministry": "Ministry of Works and Housing",
-      "completion_progress": 40,
-      "description": "Widening of the major commercial expressway to 6 lanes to reduce traffic congestion.",
-      "key_objectives": ["Ease traffic congestion", "Improve road safety", "Boost local commerce"],
-      "beneficiaries": "Daily commuters and commercial transporters",
-      "expected_impact": "Faster travel times and reduced vehicular accidents"
+      "projectName": `Expressway Expansion Sector ${randomSuffix}`,
+      "country": country,
+      "stateOrRegion": "Commercial District",
+      "specificAddressLandmark": "Highway 1",
+      "budgetLocalCurrency": 1200000000,
+      "startPeriod": "2022-06",
+      "endPeriod": "2024-06",
+      "isOngoing": true,
+      "supervisingMinistry": "Ministry of Works and Housing",
+      "completionProgress": 40,
+      "projectDescription": "Widening of the major commercial expressway to 6 lanes to reduce traffic congestion.",
+      "keyObjectives": "Ease traffic congestion, Improve road safety, Boost local commerce",
+      "targetBeneficiaries": "Daily commuters and commercial transporters",
+      "expectedImpact": "Faster travel times and reduced vehicular accidents",
+      "sourceUrls": "https://simulated-news.local/expressway-expansion"
     },
     {
-      "project_name": `Rural Electrification Project ${randomSuffix}`,
-      "location": `Northern District, ${country}`,
-      "claimed_budget_local": 350000000,
-      "currency": "NGN",
-      "source_url": "https://simulated-news.local/rural-electrification",
-      "ministry": "Ministry of Power",
-      "completion_progress": 5,
-      "description": "Installation of solar micro-grids in 50 off-grid communities.",
-      "key_objectives": ["Provide clean energy", "Connect rural homes", "Power local businesses"],
-      "beneficiaries": "Rural communities in the Northern District",
-      "expected_impact": "24/7 access to electricity for 10,000 households"
+      "projectName": `Rural Electrification Project ${randomSuffix}`,
+      "country": country,
+      "stateOrRegion": "Northern District",
+      "specificAddressLandmark": "Remote Villages",
+      "budgetLocalCurrency": 350000000,
+      "startPeriod": "2023-11",
+      "endPeriod": "2024-11",
+      "isOngoing": true,
+      "supervisingMinistry": "Ministry of Power",
+      "completionProgress": 5,
+      "projectDescription": "Installation of solar micro-grids in 50 off-grid communities.",
+      "keyObjectives": "Provide clean energy, Connect rural homes, Power local businesses",
+      "targetBeneficiaries": "Rural communities in the Northern District",
+      "expectedImpact": "24/7 access to electricity for 10,000 households",
+      "sourceUrls": "https://simulated-news.local/rural-electrification"
     },
     {
-      "project_name": `Federal University Library Construction ${randomSuffix}`,
-      "location": `University Town, ${country}`,
-      "claimed_budget_local": 210000000,
-      "currency": "NGN",
-      "source_url": "https://simulated-news.local/library-construction",
-      "ministry": "Ministry of Education",
-      "completion_progress": 80,
-      "description": "Construction of a modern digital library and research center.",
-      "key_objectives": ["Expand reading spaces", "Provide digital research tools"],
-      "beneficiaries": "Students and Faculty Members",
-      "expected_impact": "Enhanced academic performance and research capabilities"
+      "projectName": `Federal University Library Construction ${randomSuffix}`,
+      "country": country,
+      "stateOrRegion": "University Town",
+      "specificAddressLandmark": "Main Campus",
+      "budgetLocalCurrency": 210000000,
+      "startPeriod": "2021-03",
+      "endPeriod": "2023-09",
+      "isOngoing": false,
+      "supervisingMinistry": "Ministry of Education",
+      "completionProgress": 100,
+      "projectDescription": "Construction of a modern digital library and research center.",
+      "keyObjectives": "Expand reading spaces, Provide digital research tools",
+      "targetBeneficiaries": "Students and Faculty Members",
+      "expectedImpact": "Enhanced academic performance and research capabilities",
+      "sourceUrls": "https://simulated-news.local/library-construction"
     },
     {
-      "project_name": `State Water Grid Overhaul ${randomSuffix}`,
-      "location": `Coastal Region, ${country}`,
-      "claimed_budget_local": 890000000,
-      "currency": "NGN",
-      "source_url": "https://simulated-news.local/water-grid-overhaul",
-      "ministry": "Ministry of Water Resources",
-      "completion_progress": 0,
-      "description": "Replacement of aging pipelines and construction of new water treatment plants.",
-      "key_objectives": ["Ensure clean drinking water", "Reduce pipeline leakage"],
-      "beneficiaries": "Coastal Region Residents",
-      "expected_impact": "Eradication of water-borne diseases in the community"
+      "projectName": `State Water Grid Overhaul ${randomSuffix}`,
+      "country": country,
+      "stateOrRegion": "Coastal Region",
+      "specificAddressLandmark": "Water Works",
+      "budgetLocalCurrency": 890000000,
+      "startPeriod": "2024-01",
+      "endPeriod": "2026-12",
+      "isOngoing": true,
+      "supervisingMinistry": "Ministry of Water Resources",
+      "completionProgress": 0,
+      "projectDescription": "Replacement of aging pipelines and construction of new water treatment plants.",
+      "keyObjectives": "Ensure clean drinking water, Reduce pipeline leakage",
+      "targetBeneficiaries": "Coastal Region Residents",
+      "expectedImpact": "Eradication of water-borne diseases in the community",
+      "sourceUrls": "https://simulated-news.local/water-grid-overhaul"
     }
   ];
 }
