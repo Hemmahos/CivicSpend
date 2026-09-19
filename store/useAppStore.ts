@@ -49,7 +49,8 @@ export interface Project {
   origin?: 'ai_scan' | 'community' | 'government';
   upvotes: number;
   downvotes: number;
-  petitionSignatures?: number;
+  petitionFor?: number;
+  petitionAgainst?: number;
   ministry?: string;
   completion_progress?: number;
   description?: string;
@@ -76,7 +77,7 @@ interface AppState {
   expertProfession: string | null;
   expertAuthTimestamp: number | null;
   deviceVotes: Record<string, 'up' | 'down'>;
-  devicePetitions: Record<string, boolean>;
+  devicePetitions: Record<string, 'for' | 'against'>;
   offlineQueue: OfflineAction[];
   // Actions
   setProjects: (projects: Project[]) => void;
@@ -96,7 +97,7 @@ interface AppState {
   flushOfflineQueue: () => Promise<void>;
   addStagedProjects: (projects: Project[]) => void;
   publishStagedProject: (id: string) => Promise<void>;
-  signPetition: (id: string) => void;
+  signPetition: (id: string, stance: 'for' | 'against') => void;
 }
 
 export const useAppStore = create<AppState>()(
@@ -310,7 +311,7 @@ export const useAppStore = create<AppState>()(
         }
       },
 
-      signPetition: (id) => {
+      signPetition: (id, stance) => {
         set((state) => {
           if (state.devicePetitions[id]) return state; // Already signed
           
@@ -318,14 +319,15 @@ export const useAppStore = create<AppState>()(
             if (p.id === id) {
               return {
                 ...p,
-                petitionSignatures: (p.petitionSignatures || 0) + 1,
+                petitionFor: stance === 'for' ? (p.petitionFor || 0) + 1 : p.petitionFor,
+                petitionAgainst: stance === 'against' ? (p.petitionAgainst || 0) + 1 : p.petitionAgainst,
               };
             }
             return p;
           });
           
           return { 
-            devicePetitions: { ...state.devicePetitions, [id]: true }, 
+            devicePetitions: { ...state.devicePetitions, [id]: stance }, 
             projects: newProjects 
           };
         });
@@ -337,12 +339,12 @@ export const useAppStore = create<AppState>()(
               id: Math.random().toString(),
               table: 'projects',
               action: 'update',
-              payload: { petitionSignatures: updatedProj.petitionSignatures },
+              payload: { petitionFor: updatedProj.petitionFor, petitionAgainst: updatedProj.petitionAgainst },
               matchKey: 'id',
               matchValue: id
             });
           } else {
-            supabase.from('projects').update({ petitionSignatures: updatedProj.petitionSignatures }).eq('id', id).then();
+            supabase.from('projects').update({ petitionFor: updatedProj.petitionFor, petitionAgainst: updatedProj.petitionAgainst }).eq('id', id).then();
           }
         }
       },

@@ -121,6 +121,16 @@ export default function ProjectCard({ project }: { project: Project }) {
                   >
                     <ThumbsDown size={18} className={userVote === 'down' ? 'fill-destructive text-destructive' : ''} /> <span className="font-medium text-sm">{project.downvotes}</span>
                   </button>
+
+                  {/* Petition stats */}
+                  <div className="flex items-center gap-3 pl-2 border-l border-border/50">
+                    <div className="flex items-center gap-1 text-green-600 dark:text-green-500" title="Signatures In Favour">
+                       <CheckCircle size={14} /> <span className="font-medium text-sm">{project.petitionFor || 0}</span>
+                    </div>
+                    <div className="flex items-center gap-1 text-red-600 dark:text-red-500" title="Signatures Against">
+                       <AlertTriangle size={14} /> <span className="font-medium text-sm">{project.petitionAgainst || 0}</span>
+                    </div>
+                  </div>
                 </div>
                 
                 <Link href={`/project/${project.id}`}>

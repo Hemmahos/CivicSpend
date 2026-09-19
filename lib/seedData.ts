@@ -36,7 +36,8 @@ export const seedProjects: Project[] = [
     origin: 'government',
     upvotes: 124,
     downvotes: 12,
-    petitionSignatures: 0
+    petitionFor: 0,
+    petitionAgainst: 0
   },
   {
     id: 'renewed_hope_2',
@@ -73,7 +74,8 @@ export const seedProjects: Project[] = [
     origin: 'government',
     upvotes: 89,
     downvotes: 4,
-    petitionSignatures: 0
+    petitionFor: 0,
+    petitionAgainst: 0
   },
   {
     id: 'renewed_hope_3',
@@ -110,6 +112,7 @@ export const seedProjects: Project[] = [
     origin: 'government',
     upvotes: 210,
     downvotes: 18,
-    petitionSignatures: 0
+    petitionFor: 0,
+    petitionAgainst: 0
   }
 ];

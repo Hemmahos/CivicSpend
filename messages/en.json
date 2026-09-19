@@ -45,7 +45,8 @@
     "community_added": "Community Added",
     "government": "Government",
     "sources_attached": "Sources attached",
-    "view_details": "View Details"
+    "view_details": "View Details",
+    "completion_progress": "Completion Progress"
   },
   "AddProjectModal": {
     "title": "Report New Project",
@@ -59,6 +60,15 @@
     "start_period": "Start Period",
     "end_period": "End Period",
     "is_ongoing": "This project is ongoing",
+    "ministry_label": "Supervising Ministry",
+    "ministry_placeholder": "E.g. Ministry of Works",
+    "progress_label": "Completion Progress (%)",
+    "description_label": "Project Description",
+    "description_placeholder": "Detailed description of the project scope...",
+    "objectives_label": "Key Objectives (Comma-separated)",
+    "objectives_placeholder": "Reduce traffic, Improve safety",
+    "beneficiaries_label": "Target Beneficiaries",
+    "impact_label": "Expected Impact",
     "cancel": "Cancel",
     "submit": "Submit Project",
     "submitting": "Submitting..."
@@ -330,12 +340,15 @@
   "Petitions": {
     "title": "Community Petitions",
     "subtitle": "Sign petitions for stalled or abandoned projects to demand accountability and action.",
-    "select_project": "Select a project to petition",
-    "select_placeholder": "Search or select a project...",
-    "signatures_count": "{count} signature(s)",
-    "sign_button": "Sign Petition",
-    "signed_button": "Petition Signed",
-    "sign_success": "Thank you for signing the petition!",
-    "no_projects": "No projects available to petition."
+    "no_projects": "No verified projects available for petition at this time.",
+    "select_placeholder": "Select a project to view petitions...",
+    "select_project": "Select Project",
+    "in_favour_count": "{count} In Favour",
+    "against_count": "{count} Against",
+    "sign_in_favour": "Sign In Favour",
+    "sign_against": "Sign Against",
+    "signed_in_favour": "Signed In Favour",
+    "signed_against": "Signed Against",
+    "sign_success": "Your signature has been securely recorded."
   }
 }

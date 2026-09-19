@@ -43,7 +43,7 @@ export default function Home() {
           }
 
           const existingProjects = useAppStore.getState().projects.map(p => p.project_name);
-          const res = await fetch('/api/ai-scan', {
+          const res = await fetch('/api/ai-radar', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ existingProjects, country: userCountry })
@@ -72,7 +72,22 @@ export default function Home() {
   const scanWithAIRadar = async () => {
     setIsScanning(true);
     try {
-      const res = await fetch('/api/ai-radar', { method: 'POST' });
+      let userCountry = 'Nigeria'; // default fallback
+      try {
+        const ipRes = await fetch('https://ipapi.co/json/');
+        if (ipRes.ok) {
+          const ipData = await ipRes.json();
+          if (ipData.country_name) userCountry = ipData.country_name;
+        }
+      } catch (e) {}
+
+      const existingProjects = useAppStore.getState().projects.map(p => p.project_name);
+      
+      const res = await fetch('/api/ai-radar', { 
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ existingProjects, country: userCountry })
+      });
       if (res.ok) {
         const data = await res.json();
         if (Array.isArray(data) && data.length > 0) {

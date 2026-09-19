@@ -114,6 +114,12 @@ export default function AddProjectModal({ isOpen, onClose }: AddProjectModalProp
         total_budget_claimed_local_currency: parseFloat(values.budget) || 0,
         expert_verified_value: null
       },
+      ministry: values.ministry,
+      completion_progress: parseInt(values.completion_progress) || 0,
+      description: values.description,
+      key_objectives: values.key_objectives ? values.key_objectives.split(',').map((o: string) => o.trim()).filter(Boolean) : [],
+      beneficiaries: values.beneficiaries,
+      expected_impact: values.expected_impact,
       deliverables: [],
       status: 'pending',
       sources: sourceList,
@@ -228,6 +234,40 @@ export default function AddProjectModal({ isOpen, onClose }: AddProjectModalProp
           <div className="flex items-center space-x-2">
             <Checkbox id="isOngoing" name="isOngoing" checked={isOngoing} onCheckedChange={(c) => setIsOngoing(c as boolean)} />
             <Label htmlFor="isOngoing">{t('is_ongoing')}</Label>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="ministry">{t('ministry_label')}</Label>
+              <Input id="ministry" name="ministry" placeholder={t('ministry_placeholder')} />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="completion_progress">{t('progress_label')}</Label>
+              <Input id="completion_progress" name="completion_progress" type="number" min="0" max="100" placeholder="0" />
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="description">{t('description_label')}</Label>
+            <Textarea id="description" name="description" rows={3} placeholder={t('description_placeholder')} />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="key_objectives">{t('objectives_label')}</Label>
+            <Input id="key_objectives" name="key_objectives" placeholder={t('objectives_placeholder')} />
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="beneficiaries">{t('beneficiaries_label')}</Label>
+              <Input id="beneficiaries" name="beneficiaries" placeholder="E.g. Local residents, Commuters" />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="expected_impact">{t('impact_label')}</Label>
+              <Input id="expected_impact" name="expected_impact" placeholder="E.g. 50% travel time reduction" />
+            </div>
           </div>
 
           <div className="space-y-2">

@@ -8,7 +8,6 @@ import { useAppStore } from '@/store/useAppStore';
 import { useTheme } from 'next-themes';
 import Footer from './Footer';
 import Logo from './Logo';
-import LanguageSwitcher from './LanguageSwitcher';
 import { useTranslations } from 'next-intl';
 
 import { seedProjects } from '@/lib/seedData';
