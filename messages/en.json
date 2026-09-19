@@ -1,6 +1,7 @@
 {
   "Header": {
     "logo": "CivicSpend",
+    "petitions": "Petitions",
     "how_it_works": "How it Works",
     "expert_audit": "Expert Audit",
     "wallet_connected": "Wallet Connected",
@@ -318,5 +319,16 @@
   "ExpertPage": {
     "title": "Oracle Layer",
     "subtitle": "Expert verification and cryptographic discrepancy signing."
+  },
+  "Petitions": {
+    "title": "Community Petitions",
+    "subtitle": "Sign petitions for stalled or abandoned projects to demand accountability and action.",
+    "select_project": "Select a project to petition",
+    "select_placeholder": "Search or select a project...",
+    "signatures_count": "{count} signature(s)",
+    "sign_button": "Sign Petition",
+    "signed_button": "Petition Signed",
+    "sign_success": "Thank you for signing the petition!",
+    "no_projects": "No projects available to petition."
   }
 }

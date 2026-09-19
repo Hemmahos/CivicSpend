@@ -49,6 +49,7 @@ export interface Project {
   origin?: 'ai_scan' | 'community' | 'government';
   upvotes: number;
   downvotes: number;
+  petitionSignatures?: number;
 }
 
 export interface OfflineAction {
@@ -69,6 +70,7 @@ interface AppState {
   expertProfession: string | null;
   expertAuthTimestamp: number | null;
   deviceVotes: Record<string, 'up' | 'down'>;
+  devicePetitions: Record<string, boolean>;
   offlineQueue: OfflineAction[];
   // Actions
   setProjects: (projects: Project[]) => void;
@@ -88,6 +90,7 @@ interface AppState {
   flushOfflineQueue: () => Promise<void>;
   addStagedProjects: (projects: Project[]) => void;
   publishStagedProject: (id: string) => Promise<void>;
+  signPetition: (id: string) => void;
 }
 
 export const useAppStore = create<AppState>()(
@@ -101,6 +104,7 @@ export const useAppStore = create<AppState>()(
       expertProfession: null,
       expertAuthTimestamp: null,
       deviceVotes: {},
+      devicePetitions: {},
       offlineQueue: [],
 
       addToQueue: (action) => set((state) => ({ offlineQueue: [...state.offlineQueue, action] })),
@@ -300,6 +304,43 @@ export const useAppStore = create<AppState>()(
         }
       },
 
+      signPetition: (id) => {
+        set((state) => {
+          if (state.devicePetitions[id]) return state; // Already signed
+          
+          const newProjects = state.projects.map(p => {
+            if (p.id === id) {
+              return {
+                ...p,
+                petitionSignatures: (p.petitionSignatures || 0) + 1,
+              };
+            }
+            return p;
+          });
+          
+          return { 
+            devicePetitions: { ...state.devicePetitions, [id]: true }, 
+            projects: newProjects 
+          };
+        });
+
+        const updatedProj = get().projects.find(p => p.id === id);
+        if (updatedProj) {
+          if (typeof window !== 'undefined' && !window.navigator.onLine) {
+            get().addToQueue({
+              id: Math.random().toString(),
+              table: 'projects',
+              action: 'update',
+              payload: { petitionSignatures: updatedProj.petitionSignatures },
+              matchKey: 'id',
+              matchValue: id
+            });
+          } else {
+            supabase.from('projects').update({ petitionSignatures: updatedProj.petitionSignatures }).eq('id', id).then();
+          }
+        }
+      },
+
       auditProject: (id, verifiedValue, note, walletId) => {
         set((state) => {
           const newProjects = state.projects.map(p => {
@@ -375,6 +416,7 @@ export const useAppStore = create<AppState>()(
       partialize: (state) => ({ 
         projects: state.projects, 
         deviceVotes: state.deviceVotes,
+        devicePetitions: state.devicePetitions,
         expertAuth: state.expertAuth,
         expertWalletAddress: state.expertWalletAddress,
         expertProfession: state.expertProfession,
