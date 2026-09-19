@@ -22,6 +22,7 @@ import {
 } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { Checkbox } from '@/components/ui/checkbox';
 import { toast } from 'sonner';
 import { useTranslations } from 'next-intl';
 
@@ -33,6 +34,7 @@ interface AddProjectModalProps {
 export default function AddProjectModal({ isOpen, onClose }: AddProjectModalProps) {
   const { addProject } = useAppStore();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isOngoing, setIsOngoing] = useState(false);
   const t = useTranslations('AddProjectModal');
   
   const [selectedCountry, setSelectedCountry] = useState<string>('');
@@ -78,10 +80,28 @@ export default function AddProjectModal({ isOpen, onClose }: AddProjectModalProp
     const sourceList = values.sources 
       ? values.sources.split(',').map((s: string) => s.trim()).filter((s: string) => s.length > 0)
       : [];
+      
+    // Parse timeline values
+    let startMonth = '', startYear = '', endMonth = '', endYear = '';
+    if (values.startPeriod) {
+      const [y, m] = values.startPeriod.split('-');
+      if (y && m) { startYear = y; startMonth = m; }
+    }
+    if (!isOngoing && values.endPeriod) {
+      const [y, m] = values.endPeriod.split('-');
+      if (y && m) { endYear = y; endMonth = m; }
+    }
 
     addProject({
       id: newProjId,
       project_name: values.project_name,
+      timeline: {
+        startMonth,
+        startYear,
+        endMonth,
+        endYear,
+        isOngoing
+      },
       evidences: [],
       location: {
         country: countryName,
@@ -186,6 +206,28 @@ export default function AddProjectModal({ isOpen, onClose }: AddProjectModalProp
                 className="pl-8"
               />
             </div>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="startPeriod">{t('start_period')}</Label>
+              <Input id="startPeriod" name="startPeriod" type="month" />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="endPeriod">{t('end_period')}</Label>
+              <Input 
+                id="endPeriod" 
+                name="endPeriod" 
+                type="month" 
+                disabled={isOngoing}
+              />
+            </div>
+          </div>
+          
+          <div className="flex items-center space-x-2">
+            <Checkbox id="isOngoing" name="isOngoing" checked={isOngoing} onCheckedChange={(c) => setIsOngoing(c as boolean)} />
+            <Label htmlFor="isOngoing">{t('is_ongoing')}</Label>
           </div>
 
           <div className="space-y-2">

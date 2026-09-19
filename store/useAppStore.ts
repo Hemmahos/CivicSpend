@@ -27,9 +27,18 @@ export interface Evidence {
   timestamp: string;
 }
 
+export interface ProjectTimeline {
+  startMonth?: string;
+  startYear?: string;
+  endMonth?: string;
+  endYear?: string;
+  isOngoing?: boolean;
+}
+
 export interface Project {
   id: string;
   project_name: string;
+  timeline?: ProjectTimeline;
   location: ProjectLocation;
   financials: Financials;
   deliverables: string[];

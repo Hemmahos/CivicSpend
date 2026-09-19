@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { useAppStore } from '@/store/useAppStore';
 import DiscrepancyBar from '@/components/DiscrepancyBar';
-import { ArrowLeft, MapPin, CheckCircle, AlertTriangle, FileText, Link as LinkIcon, Bot, Users, Building, Camera, Check } from 'lucide-react';
+import { ArrowLeft, MapPin, CheckCircle, AlertTriangle, FileText, Link as LinkIcon, Bot, Users, Building, Camera, Check, Calendar } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
@@ -71,10 +71,18 @@ export default function ProjectDetailsPage() {
           </div>
           <h1 className="text-3xl md:text-4xl font-bold dark:font-medium text-card-foreground leading-tight tracking-tight">{project.project_name}</h1>
           
-          <div className="flex items-center gap-6 mt-6">
+          <div className="flex flex-wrap items-center gap-6 mt-6">
             <p className="text-muted-foreground flex items-center gap-2 font-medium">
               <MapPin size={16}/> {project.location.specific_address}
             </p>
+            {project.timeline && (project.timeline.startYear || project.timeline.isOngoing) && (
+              <p className="text-muted-foreground flex items-center gap-2 font-medium">
+                <Calendar size={16}/> 
+                {project.timeline.startMonth ? `${project.timeline.startMonth}/` : ''}{project.timeline.startYear || t('unknown_date')} 
+                {' - '}
+                {project.timeline.isOngoing ? t('ongoing') : (project.timeline.endYear ? `${project.timeline.endMonth ? project.timeline.endMonth + '/' : ''}${project.timeline.endYear}` : t('unknown_date'))}
+              </p>
+            )}
           </div>
         </div>
       </div>

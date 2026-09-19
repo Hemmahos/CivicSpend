@@ -55,6 +55,9 @@
     "state_label": "State / Region",
     "budget_label": "Budget (if known)",
     "contractor_label": "Contractor (if known)",
+    "start_period": "Start Period",
+    "end_period": "End Period",
+    "is_ongoing": "This project is ongoing",
     "cancel": "Cancel",
     "submit": "Submit Project",
     "submitting": "Submitting..."
@@ -112,7 +115,9 @@
     "awaiting_assignment": "Awaiting expert assignment",
     "signed_by": "Signed by:",
     "upvotes": "Upvotes",
-    "downvotes": "Downvotes"
+    "downvotes": "Downvotes",
+    "ongoing": "Ongoing",
+    "unknown_date": "Unknown"
   },
   "Tabs": {
     "discovery": "Discovery Feed",
