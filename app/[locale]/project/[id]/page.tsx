@@ -68,6 +68,11 @@ export default function ProjectDetailsPage() {
             {project.status === 'expert_audited' && <Badge variant="secondary" className="bg-emerald-100 text-emerald-800 hover:bg-emerald-100 dark:bg-emerald-900/30 dark:text-emerald-400 flex items-center gap-1"><CheckCircle size={12}/> {t('expert_audited')}</Badge>}
             {getOriginTag()}
             <Badge variant="secondary" className="flex items-center gap-1"><MapPin size={12}/>{project.location.state_or_region}</Badge>
+            {project.ministry && (
+              <Badge variant="outline" className="text-muted-foreground bg-muted/20">
+                <Building size={12} className="mr-1" /> {project.ministry}
+              </Badge>
+            )}
           </div>
           <h1 className="text-3xl md:text-4xl font-bold dark:font-medium text-card-foreground leading-tight tracking-tight">{project.project_name}</h1>
           
@@ -84,8 +89,64 @@ export default function ProjectDetailsPage() {
               </p>
             )}
           </div>
+          
+          {project.completion_progress !== undefined && (
+            <div className="mt-8 pt-6 border-t border-border">
+              <div className="flex justify-between items-center mb-2">
+                <span className="font-semibold text-muted-foreground">{t('completion_progress') || "Progress"}</span>
+                <span className="text-lg font-bold text-primary">{project.completion_progress}%</span>
+              </div>
+              <div className="w-full bg-muted h-3 rounded-full overflow-hidden">
+                <div 
+                  className="bg-primary h-full rounded-full transition-all duration-500 ease-in-out" 
+                  style={{ width: `${project.completion_progress}%` }} 
+                />
+              </div>
+            </div>
+          )}
         </div>
       </div>
+
+      {/* Project Details (New Rich Data) */}
+      {(project.description || project.key_objectives || project.beneficiaries || project.expected_impact) && (
+        <div className="bg-card rounded-3xl shadow-sm border border-border overflow-hidden mb-6 p-8">
+          {project.description && (
+            <div className="mb-6 pb-6 border-b border-border">
+              <h3 className="text-xl font-bold text-card-foreground mb-3">{t('overview')}</h3>
+              <p className="text-foreground leading-relaxed">{project.description}</p>
+            </div>
+          )}
+          
+          {project.key_objectives && project.key_objectives.length > 0 && (
+            <div className="mb-6 pb-6 border-b border-border">
+              <h3 className="text-xl font-bold text-card-foreground mb-3">{t('key_objectives')}</h3>
+              <ul className="space-y-3">
+                {project.key_objectives.map((obj, i) => (
+                  <li key={i} className="flex items-start gap-3">
+                     <CheckCircle size={18} className="text-primary mt-0.5 shrink-0" />
+                     <span className="text-foreground">{obj}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {project.beneficiaries && (
+              <div>
+                <h3 className="text-lg font-bold text-card-foreground mb-2">{t('beneficiaries')}</h3>
+                <p className="text-muted-foreground leading-relaxed">{project.beneficiaries}</p>
+              </div>
+            )}
+            {project.expected_impact && (
+              <div>
+                <h3 className="text-lg font-bold text-card-foreground mb-2">{t('expected_impact')}</h3>
+                <p className="text-muted-foreground leading-relaxed">{project.expected_impact}</p>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* Media Evidence - Moved out of the main card */}
       <div className="bg-card rounded-3xl shadow-sm border border-border overflow-hidden mb-6">

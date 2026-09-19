@@ -118,7 +118,14 @@
     "upvotes": "Upvotes",
     "downvotes": "Downvotes",
     "ongoing": "Ongoing",
-    "unknown_date": "Unknown"
+    "unknown_date": "Unknown",
+    "ministry": "Ministry",
+    "completion_progress": "Completion Progress",
+    "description": "Description",
+    "key_objectives": "Key Objectives",
+    "beneficiaries": "Beneficiaries",
+    "expected_impact": "Expected Impact",
+    "overview": "Overview"
   },
   "Tabs": {
     "discovery": "Discovery Feed",

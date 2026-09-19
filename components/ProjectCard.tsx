@@ -62,6 +62,11 @@ export default function ProjectCard({ project }: { project: Project }) {
         <div className="flex flex-wrap items-center gap-2 mb-3">
           {getStatusTag()}
           {getOriginTag()}
+          {project.ministry && (
+            <Badge variant="outline" className="text-muted-foreground bg-muted/20">
+              <Building size={12} className="mr-1" /> {project.ministry}
+            </Badge>
+          )}
         </div>
         <Link href={`/project/${project.id}`}>
           <h3 className="font-bold text-lg text-card-foreground hover:text-primary transition-colors line-clamp-2">
@@ -71,6 +76,22 @@ export default function ProjectCard({ project }: { project: Project }) {
         <p className="text-sm text-muted-foreground mt-1 flex items-center gap-1 font-medium">
           <MapPin size={14} /> {project.location.specific_address}, {project.location.state_or_region}
         </p>
+        
+        {project.completion_progress !== undefined && (
+          <div className="mt-3 mb-1">
+            <div className="flex justify-between items-center mb-1.5">
+              <span className="text-xs font-medium text-muted-foreground">{t('completion_progress') || "Progress"}</span>
+              <span className="text-xs font-bold text-primary">{project.completion_progress}%</span>
+            </div>
+            <div className="w-full bg-muted h-1.5 rounded-full overflow-hidden">
+              <div 
+                className="bg-primary h-full rounded-full transition-all duration-500 ease-in-out" 
+                style={{ width: `${project.completion_progress}%` }} 
+              />
+            </div>
+          </div>
+        )}
+        
         <p className="text-xs font-medium text-muted-foreground/70 mt-2 flex items-center gap-1">
           <LinkIcon size={12} /> {project.sources?.length || 0} {t('sources_attached')}
         </p>

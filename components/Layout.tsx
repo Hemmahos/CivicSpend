@@ -11,16 +11,25 @@ import Logo from './Logo';
 import LanguageSwitcher from './LanguageSwitcher';
 import { useTranslations } from 'next-intl';
 
+import { seedProjects } from '@/lib/seedData';
+
 export default function Layout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const { expertAuth } = useAppStore();
+  const { expertAuth, projects, addProjects } = useAppStore();
   const { resolvedTheme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
   const t = useTranslations('Header');
 
   useEffect(() => {
     setMounted(true);
-  }, []);
+    
+    // Seed initial mock projects if they don't exist
+    if (projects.length > 0 && !projects.some(p => p.id === 'renewed_hope_1')) {
+      addProjects(seedProjects);
+    } else if (projects.length === 0) {
+      addProjects(seedProjects);
+    }
+  }, [projects, addProjects]);
 
   const navItems = [
     { name: t('feed'), path: '/' },

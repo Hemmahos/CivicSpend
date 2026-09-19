@@ -50,6 +50,12 @@ export interface Project {
   upvotes: number;
   downvotes: number;
   petitionSignatures?: number;
+  ministry?: string;
+  completion_progress?: number;
+  description?: string;
+  key_objectives?: string[];
+  beneficiaries?: string;
+  expected_impact?: string;
 }
 
 export interface OfflineAction {
