@@ -10,8 +10,6 @@ import Footer from './Footer';
 import Logo from './Logo';
 import { useTranslations } from 'next-intl';
 
-import { seedProjects } from '@/lib/seedData';
-
 export default function Layout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const { expertAuth, projects, addProjects } = useAppStore();
@@ -21,14 +19,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     setMounted(true);
-    
-    // Seed initial mock projects if they don't exist
-    if (projects.length > 0 && !projects.some(p => p.id === 'renewed_hope_1')) {
-      addProjects(seedProjects);
-    } else if (projects.length === 0) {
-      addProjects(seedProjects);
-    }
-  }, [projects, addProjects]);
+  }, []);
 
   const navItems = [
     { name: t('feed'), path: '/' },
