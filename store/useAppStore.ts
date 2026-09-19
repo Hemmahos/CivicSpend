@@ -432,7 +432,7 @@ export const useAppStore = create<AppState>()(
       name: 'civic-spend-storage',
       // We only persist the projects array, deviceVotes, auth, and offlineQueue
       partialize: (state) => ({ 
-        projects: state.projects, 
+        projects: state.projects.filter(p => p.status !== 'ai_staged'), 
         deviceVotes: state.deviceVotes,
         devicePetitions: state.devicePetitions,
         expertAuth: state.expertAuth,
@@ -442,10 +442,16 @@ export const useAppStore = create<AppState>()(
         offlineQueue: state.offlineQueue
       }),
       onRehydrateStorage: () => (state) => {
-        if (state?.expertAuthTimestamp) {
-          const thirtyDaysMs = 30 * 24 * 60 * 60 * 1000;
-          if (Date.now() - state.expertAuthTimestamp > thirtyDaysMs) {
-            setTimeout(() => state.logoutExpert(), 0);
+        if (state) {
+          // Clean up any ai_staged projects that might have been saved in older versions of localStorage
+          if (state.projects) {
+            state.projects = state.projects.filter((p: Project) => p.status !== 'ai_staged');
+          }
+          if (state.expertAuthTimestamp) {
+            const thirtyDaysMs = 30 * 24 * 60 * 60 * 1000;
+            if (Date.now() - state.expertAuthTimestamp > thirtyDaysMs) {
+              setTimeout(() => state.logoutExpert(), 0);
+            }
           }
         }
       },
